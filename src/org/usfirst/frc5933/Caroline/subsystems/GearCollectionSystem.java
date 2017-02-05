@@ -47,5 +47,19 @@ public class GearCollectionSystem extends Subsystem {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
+
+	public void robotInit() {
+
+	}
+	
+	public void teleopInit() {
+
+	}
+	
+	public void autonomousInit() {
+
+	}
+
+
 }
 

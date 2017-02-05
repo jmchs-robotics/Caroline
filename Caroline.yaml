@@ -94,7 +94,7 @@ Children:
         validators: null
         value: *id004
     Base: Subsystem
-    Name: Climbing
+    Name: ClimbingSystem
   - Children:
     - Children: []
       Properties:
@@ -105,7 +105,7 @@ Children:
           validators: *id006
           value: '7'
       Base: CAN Talon
-      Name: WheelMotor
+      Name: FlyWheel
     Properties:
       Default command parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
@@ -120,7 +120,7 @@ Children:
         validators: null
         value: *id004
     Base: Subsystem
-    Name: FlyWheel
+    Name: FlyWheelSystem
   - Children:
     - Children: []
       Properties:
@@ -156,7 +156,7 @@ Children:
         validators: null
         value: *id004
     Base: Subsystem
-    Name: BallColledtionSystem
+    Name: BallCollectionSystem
   - Children:
     - Children: []
       Properties:
@@ -182,7 +182,7 @@ Children:
         validators: null
         value: *id004
     Base: Subsystem
-    Name: Hopper
+    Name: HopperSystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
@@ -891,7 +891,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: Hopper}
+        name: Requires, type: Subsystem, validators: null, value: None}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -909,7 +909,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: FlyWheel}
+        name: Requires, type: Subsystem, validators: null, value: None}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -927,7 +927,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: BallColledtionSystem}
+        name: Requires, type: Subsystem, validators: null, value: None}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -945,7 +945,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: BallColledtionSystem}
+        name: Requires, type: Subsystem, validators: null, value: None}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -963,7 +963,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: Climbing}
+        name: Requires, type: Subsystem, validators: null, value: None}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
