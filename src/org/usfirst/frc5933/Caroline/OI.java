@@ -128,8 +128,8 @@ public class OI {
 
         // SmartDashboard Buttons
         SmartDashboard.putData("RunSpindle", new RunSpindle());
-        SmartDashboard.putData("Autonomous Command", new AutonomousCommand());
-        SmartDashboard.putData("ArcadeDrive", new ArcadeDrive());
+        SmartDashboard.putData("DefaultAutonomousCommand", new DefaultAutonomousCommand());
+        SmartDashboard.putData("DefaultTeleopCommand", new DefaultTeleopCommand());
         SmartDashboard.putData("BackOpen", new BackOpen());
         SmartDashboard.putData("FrontOpen", new FrontOpen());
         SmartDashboard.putData("FeedBalls", new FeedBalls());
