@@ -21,6 +21,12 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Add shuttering to drive train.
 // TODO: Add a TurnDegrees command.
 // TODO: Add sequential and parallel commands to autonomous commands.
+// TODO: Add field elements contants so that we can use them in calculations.
+// TODO: Add a lookup table (if neccesary) that allows us to map drive train encoder values to actual feet/inches.
+// TODO: Do we need to take image recognition values and map to inches ?
+// TODO: Add a drive to peg command.
+// TODO: Change UDP from broadcast to unicast.
+// TODO: Makes sure prefs work in dumb dashboard.
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
