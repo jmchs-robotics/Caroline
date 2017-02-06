@@ -16,8 +16,9 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Use the gyro ?
 // TODO: Use the accelerometer ?
 // TODO: Maintain the fly wheel rpm.
-// TODO: USe encoders from the new gear boxes.
-// TODo: Use the servos on the near gear boxes to switch speeds.
+// TODO: Use encoders from the new gear boxes.
+// TODO: Use the servos on the near gear boxes to switch speeds.
+// TODO: Add shuttering to drive train.
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
