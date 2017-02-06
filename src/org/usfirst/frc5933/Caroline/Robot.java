@@ -19,6 +19,8 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Use encoders from the new gear boxes.
 // TODO: Use the servos on the near gear boxes to switch speeds.
 // TODO: Add shuttering to drive train.
+// TODO: Add a TurnDegrees command.
+// TODO: Add sequential and parallel commands to autonomous commands.
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
