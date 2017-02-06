@@ -27,6 +27,11 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Add a drive to peg command.
 // TODO: Change UDP from broadcast to unicast.
 // TODO: Makes sure prefs work in dumb dashboard.
+// TODO: Upgrade Rosie RIO
+// TODO: Upgrade all firmware. Talon, PDP, VRM.
+// TODO: Does the VRM have a can ID ?
+// TOOD: Lookup code on CTRE git hub site as an example of how to do MagEncoders.
+// TODO: Makes sure that limit switches work on Flappers.
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
