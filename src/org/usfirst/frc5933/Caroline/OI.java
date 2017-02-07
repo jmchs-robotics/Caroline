@@ -116,7 +116,7 @@ public class OI {
         yButton = new JoystickButton(driverJoystick, 4);
         yButton.whileHeld(new NullCommand());
         aButton = new JoystickButton(driverJoystick, 1);
-        aButton.whileHeld(new NullCommand());
+        aButton.whenPressed(new ToggleGearShifter());
         xButton = new JoystickButton(driverJoystick, 3);
         xButton.whileHeld(new NullCommand());
         rBumper = new JoystickButton(driverJoystick, 6);
