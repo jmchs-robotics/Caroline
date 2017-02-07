@@ -20,5 +20,14 @@
 			<attribute name="javadoc_location" value="jar:file:/C:/Users/Andrew%20Van%20Uitert/wpilib/user/java/docs/CTRLib-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/cscore-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/cscore.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/NetworkTables-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/NetworkTables.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/opencv-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/opencv.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/WPILib-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/java/current/lib/WPILib.jar"/>
+	<classpathentry kind="lib" path="/Users/miriamsmith/wpilib/user/java/lib/CTRLib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

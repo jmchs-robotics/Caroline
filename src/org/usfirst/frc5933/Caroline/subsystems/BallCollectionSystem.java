@@ -16,7 +16,11 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- *
+ *This subsystem should:
+ *1. run at same time
+ *2. turn on *
+ *3. turn off *
+ * * = completed
  */
 public class BallCollectionSystem extends Subsystem {
 
@@ -54,6 +58,16 @@ public class BallCollectionSystem extends Subsystem {
     public void autonomousInit() {
 
     }
+    
+    public void turnOn() {
+    	vacuumMotor.set(1);
+    	elevatorMotor.set(1);
+    }
+    
+    public void turnOff() {
+    	vacuumMotor.set(0);
+    	elevatorMotor.set(0);
+    }
 
-    // TODO: Something useful
+    
 }

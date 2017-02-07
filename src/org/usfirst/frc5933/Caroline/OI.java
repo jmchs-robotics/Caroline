@@ -80,7 +80,7 @@ public class OI {
         subsystemJoystick = new Joystick(1);
         
         startButtonSub = new JoystickButton(subsystemJoystick, 8);
-        startButtonSub.whileHeld(new NullCommand());
+        startButtonSub.whileHeld(new RunVacuum());
         backButtonSub = new JoystickButton(subsystemJoystick, 7);
         backButtonSub.whenPressed(new DriveStraight());
         lToggleSub = new JoystickButton(subsystemJoystick, 9);
