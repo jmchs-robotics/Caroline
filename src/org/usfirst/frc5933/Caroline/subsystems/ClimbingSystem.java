@@ -55,6 +55,15 @@ public class ClimbingSystem extends Subsystem {
     public void autonomousInit() {
 
     }
+    
+    public void teleopPeriodic() {
+        
+    }
+
+    public void autonomousPeriodic() {
+        
+    }
+
     // TODO: Something useful
 
 }

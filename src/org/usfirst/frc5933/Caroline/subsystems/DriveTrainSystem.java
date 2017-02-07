@@ -160,4 +160,12 @@ public class DriveTrainSystem extends Subsystem {
                                                                   // follow.
         }
     }
+
+    public void teleopPeriodic() {
+        
+    }
+
+    public void autonomousPeriodic() {
+        
+    }
 }

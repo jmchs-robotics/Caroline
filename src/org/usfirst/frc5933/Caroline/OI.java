@@ -80,7 +80,7 @@ public class OI {
         subsystemJoystick = new Joystick(1);
         
         startButtonSub = new JoystickButton(subsystemJoystick, 8);
-        startButtonSub.whileHeld(new RunVacuum());
+        startButtonSub.whenPressed(new ToggleVacuum());
         backButtonSub = new JoystickButton(subsystemJoystick, 7);
         backButtonSub.whenPressed(new DriveStraight());
         lToggleSub = new JoystickButton(subsystemJoystick, 9);
@@ -88,9 +88,9 @@ public class OI {
         rToggleSub = new JoystickButton(subsystemJoystick, 10);
         rToggleSub.whenPressed(new FlySlower());
         lBumperSub = new JoystickButton(subsystemJoystick, 5);
-        lBumperSub.whileHeld(new NullCommand());
+        lBumperSub.whenPressed(new ToggleHopper());
         rBumperSub = new JoystickButton(subsystemJoystick, 6);
-        rBumperSub.whenPressed(new FireBalls());
+        rBumperSub.whenPressed(new ToggleFlywheel());
         yButtonSub = new JoystickButton(subsystemJoystick, 4);
         yButtonSub.whenPressed(new BackFlapClose());
         bButtonSub = new JoystickButton(subsystemJoystick, 2);

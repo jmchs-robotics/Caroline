@@ -27,9 +27,6 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Add a drive to peg command.
 // TODO: Change UDP from broadcast to unicast.
 // TODO: Makes sure prefs work in dumb dashboard.
-// TODO: Upgrade Rosie RIO
-// TODO: Upgrade all firmware. Talon, PDP, VRM.
-// TODO: Does the VRM have a can ID ?
 // TOOD: Lookup code on CTRE git hub site as an example of how to do MagEncoders.
 // TODO: Makes sure that limit switches work on Flappers.
 
@@ -165,7 +162,8 @@ public class Robot extends IterativeRobot {
         ballCollectionSystem.autonomousInit();
         hopperSystem.autonomousInit();
         driveTrainSystem.autonomousInit();
-
+        powerSystem.autonomousInit();
+        
         // schedule the autonomous command (example)
         if (autonomousCommand != null)
             autonomousCommand.start();
@@ -178,6 +176,14 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+        gearCollectionSystem.autonomousPeriodic();
+        climbingSystem.autonomousPeriodic();
+        flyWheelSystem.autonomousPeriodic();
+        ballCollectionSystem.autonomousPeriodic();
+        hopperSystem.autonomousPeriodic();
+        driveTrainSystem.autonomousPeriodic();
+        powerSystem.autonomousPeriodic();
+        
         Scheduler.getInstance().run();
     }
 
@@ -188,7 +194,8 @@ public class Robot extends IterativeRobot {
         ballCollectionSystem.teleopInit();
         hopperSystem.teleopInit();
         driveTrainSystem.teleopInit();
-
+        powerSystem.teleopInit();
+        
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -205,6 +212,14 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+        gearCollectionSystem.teleopPeriodic();
+        climbingSystem.teleopPeriodic();
+        flyWheelSystem.teleopPeriodic();
+        ballCollectionSystem.teleopPeriodic();
+        hopperSystem.teleopPeriodic();
+        driveTrainSystem.teleopPeriodic();
+        powerSystem.teleopPeriodic();
+        
         Scheduler.getInstance().run();
     }
 

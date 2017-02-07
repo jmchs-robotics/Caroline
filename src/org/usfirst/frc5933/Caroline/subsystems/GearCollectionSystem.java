@@ -72,4 +72,11 @@ public class GearCollectionSystem extends Subsystem {
         frontFlapperMotor.stopMotor();
         backFlapperMotor.stopMotor();
     }
+    public void teleopPeriodic() {
+        
+    }
+
+    public void autonomousPeriodic() {
+        
+    }
 }

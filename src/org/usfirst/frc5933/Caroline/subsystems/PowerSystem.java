@@ -42,7 +42,22 @@ public class PowerSystem extends Subsystem {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
     }
+    public void robotInit() {
 
-    // TODO: Check CAN ID
+    }
 
+    public void teleopInit() {
+
+    }
+
+    public void autonomousInit() {
+
+    }
+    public void teleopPeriodic() {
+        
+    }
+
+    public void autonomousPeriodic() {
+        
+    }
 }
