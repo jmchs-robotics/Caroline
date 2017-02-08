@@ -29,8 +29,9 @@ public class DriveTrainSystem extends Subsystem {
     public final static float kNominalVoltage = 0;
     public final static float kPeakVoltage = 12;
 
-    private boolean in_low_gear_ = true;
-
+    private boolean in_low_gear_ = false;
+    private boolean is_shifting_ = false;
+    
     public final static double kLowGearMin = 0;
     public final static double kLowGearMax = 5;
 
@@ -173,26 +174,38 @@ public class DriveTrainSystem extends Subsystem {
 
     
     private void adjustGearing() {
+    	boolean left_is_done = false;
+    	boolean right_is_done = false;
         if (inLowGear()) {
             double leftAngle = leftShifter.getAngle(); 
             if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
                 leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+            } else {
+            	left_is_done = true;
             }
             
             double rightAngle = rightShifter.getAngle(); 
             if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
-                leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+                rightShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+            } else {
+            	right_is_done = true;
             }
+            is_shifting_ = left_is_done && right_is_done;
         } else {
             double leftAngle = leftShifter.getAngle(); 
             if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
                 leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+            } else {
+            	left_is_done = true;
             }
                     
             double rightAngle = rightShifter.getAngle(); 
             if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
-                leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+                rightShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+            } else {
+            	right_is_done = true;
             }
+            is_shifting_ = left_is_done && right_is_done;
         }
     }
     
@@ -210,6 +223,10 @@ public class DriveTrainSystem extends Subsystem {
     }
     
     public void shift() {
+    	if (is_shifting_)
+    		return;
+    	
+    	is_shifting_ = true;
         in_low_gear_ = !in_low_gear_;
     }
     

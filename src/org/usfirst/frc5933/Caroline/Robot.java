@@ -24,7 +24,6 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Add field elements contants so that we can use them in calculations.
 // TODO: Add a lookup table (if neccesary) that allows us to map drive train encoder values to actual feet/inches.
 // TODO: Do we need to take image recognition values and map to inches ?
-// TODO: Add a drive to peg command.
 // TODO: Change UDP from broadcast to unicast.
 // TODO: Makes sure prefs work in dumb dashboard.
 // TOOD: Lookup code on CTRE git hub site as an example of how to do MagEncoders.
