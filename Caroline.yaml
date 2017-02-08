@@ -61,7 +61,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: &id006 [CANID]
-          value: '6'
+          value: '19'
       Base: CAN Talon
       Name: ClimbingSpindleMotor
     - Children: []
@@ -103,7 +103,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: *id006
-          value: '20'
+          value: '11'
       Base: CAN Talon
       Name: FlyWheelMotor
     Properties:
@@ -129,7 +129,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: *id006
-          value: '8'
+          value: '16'
       Base: CAN Talon
       Name: ElevatorMotor
     - Children: []
@@ -139,7 +139,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: *id006
-          value: '9'
+          value: '17'
       Base: CAN Talon
       Name: VacuumMotor
     Properties:
@@ -165,7 +165,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: *id006
-          value: '10'
+          value: '12'
       Base: CAN Talon
       Name: AgitiatorMotor
     Properties:
@@ -192,7 +192,7 @@ Children:
             default: '2'
             name: CAN ID
             validators: *id006
-            value: '11'
+            value: '6'
         Base: CAN Talon
         Name: LeftMasterMotor
       - Children: []
@@ -202,7 +202,7 @@ Children:
             default: '2'
             name: CAN ID
             validators: *id006
-            value: '12'
+            value: '5'
         Base: CAN Talon
         Name: RightMasterMotor
       Properties:
@@ -277,7 +277,7 @@ Children:
           default: '0'
           name: CAN ID
           validators: null
-          value: '0'
+          value: '3'
       Base: PowerDistributionPanel
       Name: PowerDistributionPanel
     Properties:
@@ -1336,19 +1336,37 @@ Children:
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Requires, type: Subsystem, validators: null, value: ClimbingSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: []
+        name: Parameter presets
+        validators: null
+        value: []
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: false}
+    Base: Command
+    Name: ToggleClaw
+  - Children: []
+    Properties:
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value: []
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: None}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: &id018 []
         name: Parameter presets
         validators: null
         value: *id018
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
-        name: Button on SmartDashboard, validators: null, value: false}
+        name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
-    Name: ToggleClaw
+    Name: ShudderCommand
   Properties: {}
   Base: Commands
   Name: Commands
 Properties:
-  Eclipse Workspace: !!robotbuilder.data.properties.FileProperty {default: /home/avan/workspace,
+  Eclipse Workspace: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\patrick\workspace',
     extension: null, folder: true, name: Eclipse Workspace, validators: null, value: ../}
   Export Commands: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Commands, validators: null, value: true}
@@ -1367,7 +1385,7 @@ Properties:
     name: Export Subsystems, validators: null, value: true}
   Simulation World File: !!robotbuilder.data.properties.StringProperty {default: /usr/share/frcsim/worlds/GearsBotDemo.world,
     name: Simulation World File, validators: null, value: /usr/share/frcsim/worlds/GearsBotDemo.world}
-  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: /home/avan/,
+  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\patrick\',
     extension: null, folder: true, name: Wiring file location, validators: null, value: ./}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: DefaultAutonomousCommand}
