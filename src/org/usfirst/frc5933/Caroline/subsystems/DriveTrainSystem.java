@@ -33,6 +33,9 @@ public class DriveTrainSystem extends Subsystem {
 	private boolean in_low_gear_ = false;
 	private boolean is_shifting_ = false;
 
+	private final static boolean leftSideInverted = true;
+	private final static boolean rightSideInverted = false;
+	
 	public final static double kLowGearMin = 0;
 	public final static double kLowGearMax = 5;
 
@@ -84,6 +87,7 @@ public class DriveTrainSystem extends Subsystem {
 
 	public void robotInit() {
 		configVoltages(kNominalVoltage, kPeakVoltage);
+		configReversed(leftSideInverted,rightSideInverted);
 		configFollower();
 	}
 
@@ -156,6 +160,11 @@ public class DriveTrainSystem extends Subsystem {
 			rightSlave2Motor.configPeakOutputVoltage(peak, -peak);
 		}
 	}
+	
+	private void configReversed(boolean leftInvert, boolean rightInvert){
+		leftMasterMotor.setInverted(leftInvert);
+		rightMasterMotor.setInverted(rightInvert);
+	}
 
 	private void configFollower() {
 		if (!Robot.is_sonny) {
@@ -186,39 +195,41 @@ public class DriveTrainSystem extends Subsystem {
 
 
 	private void adjustGearing() { //low goes to high and high goes to low. Automagically.
-		boolean left_is_done = false;
-		boolean right_is_done = false;
-		if (inLowGear()) { //always maintains a gear during match
-			double leftAngle = leftShifter.getAngle(); 
-			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
-				leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
-			} else {
-				left_is_done = true;
-			}
-
-			double rightAngle = rightShifter.getAngle(); 
-			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
-				rightShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
-			} else {
-				right_is_done = true;
-			}
-			is_shifting_ = !(left_is_done && right_is_done);
-		} else {
-			double leftAngle = leftShifter.getAngle(); 
-			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
-				leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
-			} else {
-				left_is_done = true;
-			}
-
-			double rightAngle = rightShifter.getAngle(); 
-			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
-				rightShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
-			} else {
-				right_is_done = true;
-			}
-			is_shifting_ = !(left_is_done && right_is_done);
-		}
+		SmartDashboard.putNumber("Left Shifter:", leftShifter.getPosition());	//for testing, getting data on servos
+		SmartDashboard.putNumber("Right Shifter:", rightShifter.getPosition());	//for testing, getting data on servos
+//		boolean left_is_done = false;
+//		boolean right_is_done = false;
+//		if (inLowGear()) { //always maintains a gear during match
+//			double leftAngle = leftShifter.getAngle(); 
+//			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
+//				leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+//			} else {
+//				left_is_done = true;
+//			}
+//
+//			double rightAngle = rightShifter.getAngle(); 
+//			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
+//				rightShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+//			} else {
+//				right_is_done = true;
+//			}
+//			is_shifting_ = !(left_is_done && right_is_done);
+//		} else {
+//			double leftAngle = leftShifter.getAngle(); 
+//			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
+//				leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+//			} else {
+//				left_is_done = true;
+//			}
+//
+//			double rightAngle = rightShifter.getAngle(); 
+//			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
+//				rightShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+//			} else {
+//				right_is_done = true;
+//			}
+//			is_shifting_ = !(left_is_done && right_is_done);
+//		}
 	}
 
 

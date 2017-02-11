@@ -91,7 +91,7 @@ public class DefaultTeleopCommand extends Command {
 				tapped2 = false;
 			}
 		}
-		
+
 		if(tapped){	//Stay away from a constant movement
 			if(POV == -1){
 				tapped = false; //allow the next shudder to happen
