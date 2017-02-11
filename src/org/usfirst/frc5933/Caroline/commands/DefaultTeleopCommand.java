@@ -69,8 +69,9 @@ public class DefaultTeleopCommand extends Command {
 
 	public void distinguishPOV(int POV) { //step one in the shudder chain
 		if(tapped){	//Stay away from a flowing movement
-			if(POV == -1)
+			if(POV == -1){
 				tapped = false; //allow the next shudder to happen
+			}
 		}else{
 			tapped = true; //Stop the shudder chain next time around
 			if(POV == 0){ //up

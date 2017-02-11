@@ -256,7 +256,7 @@ public class DriveTrainSystem extends Subsystem {
 		if(shudderMagnitude > kMaximumMagnitudePercentVBusShudder){
 			shudderMagnitude = kMaximumMagnitudePercentVBusShudder;
 		}else{
-			shudderMagnitude ++;
+			shudderMagnitude += 0.1;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
@@ -265,7 +265,7 @@ public class DriveTrainSystem extends Subsystem {
 		if(shudderMagnitude < kMinimumMagnitudePercentVBusShudder){
 			shudderMagnitude = kMinimumMagnitudePercentVBusShudder;
 		}else{
-			shudderMagnitude --;
+			shudderMagnitude -= 0.1;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
