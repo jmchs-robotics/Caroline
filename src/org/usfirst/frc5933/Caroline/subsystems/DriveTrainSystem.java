@@ -36,11 +36,11 @@ public class DriveTrainSystem extends Subsystem {
 	private final static boolean leftSideInverted = true;
 	private final static boolean rightSideInverted = false;
 	
-	public final static double kLowGearMin = 0;
-	public final static double kLowGearMax = 5;
+	public final static double kLowGearMin = 0.6; //These are tested values. the set() uses a 0.0 - 1.0 range
+	public final static double kLowGearMax = 0.525; //these are intermediate guestimated values. is more like maxLooseness
 
-	public final static double kHighGearMin = 165;
-	public final static double kHighGearMax = 170;
+	public final static double kHighGearMin = 0.05; //believe me, these values work
+	public final static double kHighGearMax = 0.085; //DON'T CHANGE
 
 	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;
 	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2;
@@ -48,8 +48,10 @@ public class DriveTrainSystem extends Subsystem {
 	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1;
 	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2;
 	
-	private final static double kMaximumMagnitudePercentVBusShudder = 0.9;
-	private final static double kMinimumMagnitudePercentVBusShudder = 0.2;
+	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;
+	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;
+	
+	private final static double kVBusShudderIncrement = 0.1; //the incrementing step. generally 0.1
 	
 	private double shudderMagnitude = 0.5;
 
@@ -195,21 +197,27 @@ public class DriveTrainSystem extends Subsystem {
 
 
 	private void adjustGearing() { //low goes to high and high goes to low. Automagically.
-		SmartDashboard.putNumber("Left Shifter:", leftShifter.getPosition());	//for testing, getting data on servos
-		SmartDashboard.putNumber("Right Shifter:", rightShifter.getPosition());	//for testing, getting data on servos
-//		boolean left_is_done = false;
+		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
+		if(inLowGear()){
+			leftShifter.set(kLowGearMin);		//this should work without feedback
+			rightShifter.set(kLowGearMin);
+		}else{
+			leftShifter.set(kHighGearMax);
+			rightShifter.set(kHighGearMax);
+		}
+//		boolean left_is_done = false;							//the servos do not return a value. This code cannot work without a separate port with a pot.
 //		boolean right_is_done = false;
 //		if (inLowGear()) { //always maintains a gear during match
 //			double leftAngle = leftShifter.getAngle(); 
 //			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
-//				leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+//				leftShifter.set((kLowGearMax - kLowGearMin) / 2);
 //			} else {
 //				left_is_done = true;
 //			}
 //
 //			double rightAngle = rightShifter.getAngle(); 
 //			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
-//				rightShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
+//				rightShifter.set((kLowGearMax - kLowGearMin) / 2);
 //			} else {
 //				right_is_done = true;
 //			}
@@ -217,14 +225,14 @@ public class DriveTrainSystem extends Subsystem {
 //		} else {
 //			double leftAngle = leftShifter.getAngle(); 
 //			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
-//				leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+//				leftShifter.set((kHighGearMax - kHighGearMin) / 2);
 //			} else {
 //				left_is_done = true;
 //			}
 //
 //			double rightAngle = rightShifter.getAngle(); 
 //			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
-//				rightShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
+//				rightShifter.set((kHighGearMax - kHighGearMin) / 2);
 //			} else {
 //				right_is_done = true;
 //			}
@@ -246,10 +254,10 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void shift() {
-		if (is_shifting_)
-			return;
+		//if (is_shifting_)
+		//	return;
 
-		is_shifting_ = true;
+		//is_shifting_ = true;
 		in_low_gear_ = !in_low_gear_;
 	}
 	// TODO: Test out GearShifting and make sure that the angles for the servos work. 
@@ -267,7 +275,7 @@ public class DriveTrainSystem extends Subsystem {
 		if(shudderMagnitude > kMaximumMagnitudePercentVBusShudder){
 			shudderMagnitude = kMaximumMagnitudePercentVBusShudder;
 		}else{
-			shudderMagnitude += 0.1;
+			shudderMagnitude += kVBusShudderIncrement;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
@@ -276,7 +284,7 @@ public class DriveTrainSystem extends Subsystem {
 		if(shudderMagnitude < kMinimumMagnitudePercentVBusShudder){
 			shudderMagnitude = kMinimumMagnitudePercentVBusShudder;
 		}else{
-			shudderMagnitude -= 0.1;
+			shudderMagnitude -= kVBusShudderIncrement;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}

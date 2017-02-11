@@ -132,6 +132,5 @@ public class RobotMap {
         
         driveTrainSystemRightSlaveMotor2 = new CANTalon(9);
         LiveWindow.addActuator("DriveTrainSystem", "RightSlaveMotor2", driveTrainSystemRightSlaveMotor2);
-        
     }
 }

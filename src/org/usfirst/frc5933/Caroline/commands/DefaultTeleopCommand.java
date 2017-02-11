@@ -71,7 +71,7 @@ public class DefaultTeleopCommand extends Command {
 		if(tapped2){	//Stay away from a constant movement
 			if(POV2 == -1){
 				tapped2 = false; //allow the next shudder to happen
-				Robot.driveTrainSystem.stop();
+				//Robot.driveTrainSystem.stop();
 			}
 		}else{
 			tapped2 = true; //Stop the shudder chain next time around
