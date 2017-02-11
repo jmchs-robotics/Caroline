@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -46,6 +47,7 @@ public class DriveTrainSystem extends Subsystem {
 	
 	private final static double kMaximumMagnitudePercentVBusShudder = 0.9;
 	private final static double kMinimumMagnitudePercentVBusShudder = 0.2;
+	
 	private double shudderMagnitude = 0.5;
 
 	public DriveTrainSystem() {
@@ -86,6 +88,7 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void teleopInit() {
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 		enableBrakeMode(false);
 	}
 
@@ -172,10 +175,10 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 
-	private void adjustGearing() {
+	private void adjustGearing() { //low goes to high and high goes to low. Automagically.
 		boolean left_is_done = false;
 		boolean right_is_done = false;
-		if (inLowGear()) {
+		if (inLowGear()) { //always maintains a gear during match
 			double leftAngle = leftShifter.getAngle(); 
 			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
 				leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
@@ -189,7 +192,7 @@ public class DriveTrainSystem extends Subsystem {
 			} else {
 				right_is_done = true;
 			}
-			is_shifting_ = left_is_done && right_is_done;
+			is_shifting_ = !(left_is_done && right_is_done);
 		} else {
 			double leftAngle = leftShifter.getAngle(); 
 			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
@@ -204,7 +207,7 @@ public class DriveTrainSystem extends Subsystem {
 			} else {
 				right_is_done = true;
 			}
-			is_shifting_ = left_is_done && right_is_done;
+			is_shifting_ = !(left_is_done && right_is_done);
 		}
 	}
 
@@ -232,7 +235,7 @@ public class DriveTrainSystem extends Subsystem {
 
 
 	public void shudder_left(){
-		set(shudderMagnitude,-shudderMagnitude);
+		set(-shudderMagnitude,shudderMagnitude);
 	}
 
 	public void shudder_right(){
@@ -245,6 +248,7 @@ public class DriveTrainSystem extends Subsystem {
 		}else{
 			shudderMagnitude ++;
 		}
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
 	
 	public void decrementShudder(){
@@ -253,5 +257,6 @@ public class DriveTrainSystem extends Subsystem {
 		}else{
 			shudderMagnitude --;
 		}
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
 }
