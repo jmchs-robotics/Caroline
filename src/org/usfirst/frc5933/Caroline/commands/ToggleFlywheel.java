@@ -37,8 +37,8 @@ public class ToggleFlywheel extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        Robot.flyWheelSystem.setVbusMode();
-        Robot.flyWheelSystem.setVbus(.5);
+        //Robot.flyWheelSystem.setVbusMode();
+        //Robot.flyWheelSystem.setVbus(.5);
         // Robot.flyWheelSystem.setSpeedMode();
         // Robot.flyWheelSystem.setSpeed(250);
         Robot.flyWheelSystem.toggle();

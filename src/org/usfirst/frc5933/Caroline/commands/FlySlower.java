@@ -37,9 +37,12 @@ public class FlySlower extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        Robot.flyWheelSystem.speedDown();
-        // Robot.flyWheelSystem.vbusDown();
-    }
+    	if(Robot.flyWheelSystem.vbus_mode){
+			Robot.flyWheelSystem.vbusDown();
+		}else{
+			Robot.flyWheelSystem.speedDown();
+		}
+	}
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
