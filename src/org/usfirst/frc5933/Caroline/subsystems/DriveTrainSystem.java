@@ -130,18 +130,28 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	private void configVoltages(float nominal, double peak) {
+		leftMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		leftMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		leftMasterMotor.configPeakOutputVoltage(peak, -peak);
+		
+		rightMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		rightMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		rightMasterMotor.configPeakOutputVoltage(peak, -peak);
 
 		if (!Robot.is_sonny) {
+			leftSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
 			leftSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
 			leftSlave1Motor.configPeakOutputVoltage(peak, -peak);
+			
+			leftSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
 			leftSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
 			leftSlave2Motor.configPeakOutputVoltage(peak, -peak);
+			
+			rightSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
 			rightSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
 			rightSlave1Motor.configPeakOutputVoltage(peak, -peak);
+			
+			rightSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
 			rightSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
 			rightSlave2Motor.configPeakOutputVoltage(peak, -peak);
 		}
