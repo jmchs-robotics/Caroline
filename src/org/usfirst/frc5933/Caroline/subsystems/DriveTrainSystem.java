@@ -33,7 +33,7 @@ public class DriveTrainSystem extends Subsystem {
 	private boolean in_low_gear_ = false;
 	private boolean is_shifting_ = false;
 
-	private final static boolean leftSideInverted = true;
+	private final static boolean leftSideInverted = false;
 	private final static boolean rightSideInverted = false;
 	
 	public final static double kLowGearMin = 0.6; //These are tested values. the set() uses a 0.0 - 1.0 range
