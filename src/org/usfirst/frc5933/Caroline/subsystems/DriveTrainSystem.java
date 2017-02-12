@@ -35,11 +35,11 @@ public class DriveTrainSystem extends Subsystem {
 
 	private final static boolean leftSideInverted = false;
 	private final static boolean rightSideInverted = false;
-	
-	public final static double kLowGearMin = 0.6; //These are tested values. the set() uses a 0.0 - 1.0 range
-	public final static double kLowGearMax = 0.525; //these are intermediate guestimated values. is more like maxLooseness
 
-	public final static double kHighGearMin = 0.05; //believe me, these values work
+	public final static double kLowGearMin = 0.6; //These are tested values. the set() uses a 0.0 - 1.0 range. DON'T CHANGE
+	//public final static double kLowGearMax = 0.525; //these are intermediate guestimated values. is more like maxLooseness
+
+	//public final static double kHighGearMin = 0.05; //believe me, these values work
 	public final static double kHighGearMax = 0.085; //DON'T CHANGE
 
 	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;
@@ -47,12 +47,12 @@ public class DriveTrainSystem extends Subsystem {
 
 	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1;
 	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2;
-	
+
 	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;
 	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;
-	
+
 	private final static double kVBusShudderIncrement = 0.1; //the incrementing step. generally 0.1
-	
+
 	private double shudderMagnitude = 0.5;
 
 	public DriveTrainSystem() {
@@ -139,7 +139,7 @@ public class DriveTrainSystem extends Subsystem {
 		leftMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		leftMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		leftMasterMotor.configPeakOutputVoltage(peak, -peak);
-		
+
 		rightMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		rightMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		rightMasterMotor.configPeakOutputVoltage(peak, -peak);
@@ -148,21 +148,21 @@ public class DriveTrainSystem extends Subsystem {
 			leftSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
 			leftSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
 			leftSlave1Motor.configPeakOutputVoltage(peak, -peak);
-			
+
 			leftSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
 			leftSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
 			leftSlave2Motor.configPeakOutputVoltage(peak, -peak);
-			
+
 			rightSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
 			rightSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
 			rightSlave1Motor.configPeakOutputVoltage(peak, -peak);
-			
+
 			rightSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
 			rightSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
 			rightSlave2Motor.configPeakOutputVoltage(peak, -peak);
 		}
 	}
-	
+
 	private void configReversed(boolean leftInvert, boolean rightInvert){
 		leftMasterMotor.setInverted(leftInvert);
 		rightMasterMotor.setInverted(rightInvert);
@@ -195,7 +195,6 @@ public class DriveTrainSystem extends Subsystem {
 		}
 	}
 
-
 	private void adjustGearing() { //low goes to high and high goes to low. Automagically.
 		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 		if(inLowGear()){
@@ -205,39 +204,39 @@ public class DriveTrainSystem extends Subsystem {
 			leftShifter.set(kHighGearMax);
 			rightShifter.set(kHighGearMax);
 		}
-//		boolean left_is_done = false;							//the servos do not return a value. This code cannot work without a separate port with a pot.
-//		boolean right_is_done = false;
-//		if (inLowGear()) { //always maintains a gear during match
-//			double leftAngle = leftShifter.getAngle(); 
-//			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
-//				leftShifter.set((kLowGearMax - kLowGearMin) / 2);
-//			} else {
-//				left_is_done = true;
-//			}
-//
-//			double rightAngle = rightShifter.getAngle(); 
-//			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
-//				rightShifter.set((kLowGearMax - kLowGearMin) / 2);
-//			} else {
-//				right_is_done = true;
-//			}
-//			is_shifting_ = !(left_is_done && right_is_done);
-//		} else {
-//			double leftAngle = leftShifter.getAngle(); 
-//			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
-//				leftShifter.set((kHighGearMax - kHighGearMin) / 2);
-//			} else {
-//				left_is_done = true;
-//			}
-//
-//			double rightAngle = rightShifter.getAngle(); 
-//			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
-//				rightShifter.set((kHighGearMax - kHighGearMin) / 2);
-//			} else {
-//				right_is_done = true;
-//			}
-//			is_shifting_ = !(left_is_done && right_is_done);
-//		}
+		//		boolean left_is_done = false;							//the servos do not return a value. This code cannot work without a separate port with a pot.
+		//		boolean right_is_done = false;
+		//		if (inLowGear()) { //always maintains a gear during match
+		//			double leftAngle = leftShifter.getAngle(); 
+		//			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
+		//				leftShifter.set((kLowGearMax - kLowGearMin) / 2);
+		//			} else {
+		//				left_is_done = true;
+		//			}
+		//
+		//			double rightAngle = rightShifter.getAngle(); 
+		//			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
+		//				rightShifter.set((kLowGearMax - kLowGearMin) / 2);
+		//			} else {
+		//				right_is_done = true;
+		//			}
+		//			is_shifting_ = !(left_is_done && right_is_done);
+		//		} else {
+		//			double leftAngle = leftShifter.getAngle(); 
+		//			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
+		//				leftShifter.set((kHighGearMax - kHighGearMin) / 2);
+		//			} else {
+		//				left_is_done = true;
+		//			}
+		//
+		//			double rightAngle = rightShifter.getAngle(); 
+		//			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
+		//				rightShifter.set((kHighGearMax - kHighGearMin) / 2);
+		//			} else {
+		//				right_is_done = true;
+		//			}
+		//			is_shifting_ = !(left_is_done && right_is_done);
+		//		}
 	}
 
 
@@ -254,13 +253,13 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void shift() {
-		//if (is_shifting_)
+		//if (is_shifting_) //we can't use this without encoder feedback from servos
 		//	return;
 
 		//is_shifting_ = true;
 		in_low_gear_ = !in_low_gear_;
 	}
-	// TODO: Test out GearShifting and make sure that the angles for the servos work. 
+	// RESOLVED: Test out GearShifting and make sure that the angles for the servos work. Constants changed at top 2/11/17
 
 
 	public void shudder_left(){
@@ -270,22 +269,21 @@ public class DriveTrainSystem extends Subsystem {
 	public void shudder_right(){
 		set(shudderMagnitude,-shudderMagnitude);
 	}
-	
-	public void incrementShudder(){
-		if(shudderMagnitude > kMaximumMagnitudePercentVBusShudder){
+
+	public void incrementShudder(){ //slight logic change, first change it, then test how large/small it is. Should be foolproof now.
+		shudderMagnitude += kVBusShudderIncrement;
+
+		if(shudderMagnitude > kMaximumMagnitudePercentVBusShudder)
 			shudderMagnitude = kMaximumMagnitudePercentVBusShudder;
-		}else{
-			shudderMagnitude += kVBusShudderIncrement;
-		}
+
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
-	
-	public void decrementShudder(){
-		if(shudderMagnitude < kMinimumMagnitudePercentVBusShudder){
+
+	public void decrementShudder(){ //same change as above.
+		shudderMagnitude -= kVBusShudderIncrement;
+
+		if(shudderMagnitude < kMinimumMagnitudePercentVBusShudder)
 			shudderMagnitude = kMinimumMagnitudePercentVBusShudder;
-		}else{
-			shudderMagnitude -= kVBusShudderIncrement;
-		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
 }
