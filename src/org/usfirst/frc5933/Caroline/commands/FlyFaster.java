@@ -37,9 +37,9 @@ public class FlyFaster extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		if(Robot.flyWheelSystem.vbus_mode){
+		if (Robot.flyWheelSystem.vbus_mode) {
 			Robot.flyWheelSystem.vbusUp();
-		}else{
+		} else {
 			Robot.flyWheelSystem.speedUp();
 		}
 	}
