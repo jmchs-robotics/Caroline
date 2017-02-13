@@ -55,11 +55,12 @@ public class FlyWheelSystem extends Subsystem {
 	//f = 100% * 1023 / ((5000 / 60 / 10) * 80)						IS TECHNICALLY INDEPENDENT FROM SYSTEM
 	private static final double kFGain = 1023 / (5000 * 80 / 600); //feed-forward gain: ~1.53
 	
-	//calculated p gain = (percentThrottleAtError * fullForwardOutput)/(maximumError)
-	//double until p oscillates (too much p) or is adequate for system. ONLY TEST WITH SYSTEM
+	//calculated p gain = (percentThrottleToFixError * fullForwardOutput)/(maximumError)
+	//double until motor oscillates (too much p) or is adequate for system. ONLY TEST WITH SYSTEM DRAG ON MOTOR
 	private static final double kPGain = 0.0; //p gain
 	
-	//smooths motion from error to setpoint. Start with 10 * pgain
+	//smooths motion from error to setpoint. 
+	//Start with 10 * pgain
 	private static final double kDGain = 0.0; //d gain
 	
 	//If dgain doesn't quite get to setpoint, add igain
