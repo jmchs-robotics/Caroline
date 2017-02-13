@@ -53,7 +53,7 @@ public class Robot extends IterativeRobot {
 
     public static OI oi;
     public static boolean is_sonny = false;
-    public static boolean show_debug_flywheel = false;
+    public static boolean show_debug_flywheel = true;
     public static boolean show_debug_vision = false;
 
     private SocketVision vision_;
