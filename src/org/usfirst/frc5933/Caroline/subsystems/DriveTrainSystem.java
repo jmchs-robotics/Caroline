@@ -77,7 +77,7 @@ public class DriveTrainSystem extends Subsystem {
 	/*http://www.andymark.com/E4T-OEM-Miniature-Optical-Encoder-Kit-p/am-3132.htm*/
 
 	//stupid sonic shifter gear ratios: 
-	//Low Ratio: 11.4:1
+	//Low Ratio: 11.4:1		//going to test, don't need these ratios. Leaving for anyone looking to do math.
 	//High Ratio: 4.5:1
 	/*http://www.andymark.com/super-sonic-2-speed-gearbox-p/am-3039_45.htm*/
 
@@ -133,14 +133,19 @@ public class DriveTrainSystem extends Subsystem {
 		// setDefaultCommand(new MySpecialCommand());
 	}
 
-	private void configFeedback(){
+	private void configLeftFeedback(){
 		leftMasterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		rightMasterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 
 		leftMasterMotor.reverseSensor(false);
-		rightMasterMotor.reverseSensor(false);
 
 		leftMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
+	}
+
+	private void configRightFeedback(){
+		rightMasterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+
+		rightMasterMotor.reverseSensor(false);
+
 		rightMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
 	}
 
@@ -156,6 +161,12 @@ public class DriveTrainSystem extends Subsystem {
 		//set control mode to motionMagic
 		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);		//comment this if using RightLead
 		//rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);	//comment this if using LeftLead
+
+		configLeftFeedback();															//comment this if using RightLead
+		//configRightFeedback();														//comment this if using LeftLead
+
+		configLeftPID(0,kFGain,kPGain,kIGain,kDGain);									//comment this if using RightLead
+		//configRightPID(0,kFGain,kPGain,kIGain,kDGain); 								//comment this if using LeftLead
 	}
 
 	private void configMotionMagicCurves(){
@@ -168,6 +179,28 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
 	}
 
+	private void configLeftPID(int profileNumber, double f, double p, double i, double d) {
+		/*set closed loop gains in profile 0 or profile 1 only*/
+		/* from example at 
+https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java */
+		leftMasterMotor.setProfile(profileNumber);
+		leftMasterMotor.setF(f);
+		leftMasterMotor.setP(p);
+		leftMasterMotor.setI(i);
+		leftMasterMotor.setD(d);
+	}
+
+	private void configRightPID(int profileNumber, double f, double p, double i, double d) {
+		/*set closed loop gains in profile 0 or profile 1 only*/
+		/* from example at 
+https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java */
+		rightMasterMotor.setProfile(profileNumber);
+		rightMasterMotor.setF(f);
+		rightMasterMotor.setP(p);
+		rightMasterMotor.setI(i);
+		rightMasterMotor.setD(d);
+	}
+
 	public void robotInit() {
 		configVoltages(kNominalVoltage, kPeakVoltage);
 		configReversed(leftSideInverted, rightSideInverted);
@@ -177,6 +210,7 @@ public class DriveTrainSystem extends Subsystem {
 	public void teleopInit() {
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
+		setVBusMode();
 		enableBrakeMode(false);
 	}
 
