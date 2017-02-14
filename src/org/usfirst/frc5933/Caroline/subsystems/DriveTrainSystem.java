@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class DriveTrainSystem extends Subsystem {
+	private enum DriveTrainConfigurations {Auto_5F1_RightLead,Auto_5F1_LeftLead,Teleop_2F1x2,Auto_2F1x2};
+	
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
 
@@ -46,20 +48,58 @@ public class DriveTrainSystem extends Subsystem {
 													// work
 	public final static double kHighGearMax = 0.085; // DON'T CHANGE
 
-	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;
-	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2;
-
-	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1;
-	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2;
-
-	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;
-	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;
-
+	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;	 //the slave and master motors have
+	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2;	 //a new terminology: X follow Y by Z
+																						 //this means that X motors are in follower
+	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1; //mode, following Y motors who act as 'master'
+	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2; //motors, by Z 'modules'. For example, Rosie's
+																						 //drivetrain ran as a 1 follow 1 by 2 setup,
+	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;				 //with both the left and right sides (the two
+	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;				 //'modules') consisting of 1 'master' motor and
+																						 //1 follower motor, hence the 1f1x2 setup (abbreviated)
 	private final static double kVBusShudderIncrement = 0.1; // the incrementing
 																// step.
 																// generally 0.1
 
 	private double shudderMagnitude = 0.5;
+	
+	/* from example at 
+	https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java */
+	private static final int kEncoderPerRev_ = 360;	//use codes per revolution unless otherwise specified
+	// Pulses Per Revolution: 1440
+	// Cycles per revolution: 360
+	// the native units are calculated by (for quadrature encoders) 4*(codes per revolution) 
+	// so we have 4 * 360 = 1440 native units per rotation
+	
+	//Encoder info:
+	//Cycles per Revolution: 360
+	//Pulses per Revolution: 1440
+	/*http://www.andymark.com/E4T-OEM-Miniature-Optical-Encoder-Kit-p/am-3132.htm*/
+	
+	//stupid sonic shifter gear ratios: 
+	//Low Ratio: 11.4:1
+	//High Ratio: 4.5:1
+	/*http://www.andymark.com/super-sonic-2-speed-gearbox-p/am-3039_45.htm*/
+
+	//Calculate native units / 100 ms (the velocity calculation is perfomed every 100 ms)
+	//target velocity (as rotations/min) * (1 min/60sec) * (1 sec/10ms) * 1440 upm
+	//nu/100ms = (5000 / 60 / 10) * 80
+	//calculate f gain (feed-forward) so 100% motor output is 5000 rpm (setpoint in code)
+	//f = 100% * (full forward output) / (native units per 100 ms)
+	//f = 100% *  1023 / ((5000 / 60 / 10) * 80)						IS TECHNICALLY INDEPENDENT FROM SYSTEM
+	private static final double kFGain = 0.0; //feed-forward gain
+
+	//calculated p gain = (percentThrottleToFixError * fullForwardOutput)/(maximumError)
+	//double until motor oscillates (too much p) or is adequate for system. ONLY TEST WITH SYSTEM DRAG ON MOTOR
+	private static final double kPGain = 0.0; //p gain
+
+	//smoothes motion from error to setpoint. 
+	//Start with 10 * pgain
+	private static final double kDGain = 0.0; //d gain
+
+	//If dgain doesn't quite get to setpoint, add igain
+	//start with 1/100 * pgain
+	private static final double kIGain = 0.0; //i gain
 
 	public DriveTrainSystem() {
 		super();
@@ -92,11 +132,41 @@ public class DriveTrainSystem extends Subsystem {
 		// Set the default command for a subsystem here.
 		// setDefaultCommand(new MySpecialCommand());
 	}
+	
+	private void configFeedback(){
+		leftMasterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		rightMasterMotor.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		
+		leftMasterMotor.reverseSensor(false);
+		rightMasterMotor.reverseSensor(false);
+		
+		leftMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
+		rightMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
+	}
+	
+	private void setVBusMode(){
+		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		}
+	
+	private void configMotionMagicStraight(){
+		//TODO: config a 5 follow 1
+		//TODO: config a 2 follow 1 by 2 with flexible error capping
+		
+		//set control mode to motionMagic
+		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+		
+	}
 
+	private void configMotionMagicCurves(){
+		//TODO: config a 2 follow 1 by 2 with camera and/or gyro feedback
+	}
+	
 	public void robotInit() {
 		configVoltages(kNominalVoltage, kPeakVoltage);
 		configReversed(leftSideInverted, rightSideInverted);
-		configFollower();
+		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
 	}
 
 	public void teleopInit() {
@@ -169,15 +239,86 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.setInverted(rightInvert);
 	}
 
-	private void configFollower() {
-		leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
-		leftSlave1Motor.set(leftMasterMotor.getDeviceID());
-		leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
-		leftSlave2Motor.set(leftMasterMotor.getDeviceID());
-		rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
-		rightSlave1Motor.set(rightMasterMotor.getDeviceID());
-		rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
-		rightSlave2Motor.set(rightMasterMotor.getDeviceID());
+	private void configFollower(DriveTrainConfigurations configType) {
+		//TODO create a switch for the enum
+		switch (configType) {
+			case Teleop_2F1x2:
+			{
+				leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+				leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave1Motor.set(rightMasterMotor.getDeviceID());
+				rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave2Motor.set(rightMasterMotor.getDeviceID());
+				
+				SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
+			}
+			break;
+			case Auto_5F1_LeftLead:
+			{
+				leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+				leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave1Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave2Motor.set(leftMasterMotor.getDeviceID());
+				
+				rightMasterMotor.changeControlMode(TalonControlMode.Follower);
+				rightMasterMotor.set(leftMasterMotor.getDeviceID());
+				
+				SmartDashboard.putString("Drive Train Config Type: ", "Auto_5F1_LeftLead");
+			}
+			break;
+			case Auto_5F1_RightLead:
+			{
+				leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+				leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave1Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave2Motor.set(leftMasterMotor.getDeviceID());
+				
+				leftMasterMotor.changeControlMode(TalonControlMode.Follower);
+				leftMasterMotor.set(rightMasterMotor.getDeviceID());
+				
+				SmartDashboard.putString("Drive Train Config Type: ", "Auto_5F1_RightLead");	
+			}
+			break;
+			case Auto_2F1x2:	//same as teleop2f1xt for now
+			{
+				leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+				leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave1Motor.set(rightMasterMotor.getDeviceID());
+				rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave2Motor.set(rightMasterMotor.getDeviceID());
+				
+				SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
+			}
+			break;
+			default: //default to teleop2f1x2
+			{
+				leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+				leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+				rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave1Motor.set(rightMasterMotor.getDeviceID());
+				rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+				rightSlave2Motor.set(rightMasterMotor.getDeviceID());
+				
+				SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
+			}
+			break;
+		}
 	}
 
 	private void adjustGearing() { // low goes to high and high goes to low.
@@ -194,6 +335,7 @@ public class DriveTrainSystem extends Subsystem {
 
 	public void teleopPeriodic() {
 		adjustGearing();
+		SmartDashboard.putNumber("Encoder out: ", leftMasterMotor.getEncVelocity());
 	}
 
 	public void autonomousPeriodic() {

@@ -42,8 +42,6 @@ public class FlyWheelSystem extends Subsystem {
 	private boolean running_ = true; 
 	private final static boolean tuning_ = false;
 	
-	private int i_ = 00;
-
 	/* from example at 
 	https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java */
 	private static final int kEncoderPerRev_ = 20;
@@ -114,6 +112,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 	}
 
 	public void teleopInit() {
+		//TODO: Remove me later, or add into a debug conditional
 		SmartDashboard.putNumber("F Gain ", kFGain);
 		SmartDashboard.putNumber("P Gain ", kPGain);
 		SmartDashboard.putNumber("I Gain ", kIGain);
@@ -194,6 +193,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 	private void goSpeed() {
 		setSpeedMode();				//safety check
 		flyWheelMotor.set(speed_);
+		//TODO: Remove later
 		SmartDashboard.putNumber("Given speed:", speed_);
 		SmartDashboard.putNumber("Encoder speed:", flyWheelMotor.getSpeed());
 		SmartDashboard.putNumber("Closed Loop Error:", flyWheelMotor.getClosedLoopError());
@@ -301,13 +301,11 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		flyWheelMotor.setMotionMagicAcceleration(1200);
 		flyWheelMotor.setMotionMagicCruiseVelocity(1200);
 		flyWheelMotor.setPosition(0);
-		//flyWheelMotor.setEncPosition(0);
 	}
 
 	public void motionMagicTest(){
-		//flyWheelMotor.pushMotionProfileTrajectory(trajPt);
 		flyWheelMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
-		flyWheelMotor.set(120);
+		flyWheelMotor.set(120); //always in native units
 		SmartDashboard.putNumber("Given pos:", vbus_);
 		SmartDashboard.putNumber("Encoder speed:", flyWheelMotor.getSpeed());
 		SmartDashboard.putNumber("Closed Loop Error:", flyWheelMotor.getClosedLoopError());
