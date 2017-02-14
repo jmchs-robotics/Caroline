@@ -24,7 +24,7 @@ public class HopperSystem extends Subsystem {
 	
 	public final static double kAgitatorIncrement = 0.05;
 	public final static double kAgitatorMin = 0;
-	public final static double kAgitatorMax = 1;
+	public final static double kAgitatorMax = 0.8;
 	
 	private double agitatorSpeed_ = 0; 
 

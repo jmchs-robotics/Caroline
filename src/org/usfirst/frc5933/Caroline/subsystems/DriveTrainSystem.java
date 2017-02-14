@@ -323,7 +323,7 @@ public class DriveTrainSystem extends Subsystem {
 
 	private void adjustGearing() { // low goes to high and high goes to low.
 									// Automagically.
-		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
+		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());	//WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED
 		if (inLowGear()) {
 			leftShifter.set(kLowGearMin); // this should work without feedback
 			rightShifter.set(kLowGearMin);
