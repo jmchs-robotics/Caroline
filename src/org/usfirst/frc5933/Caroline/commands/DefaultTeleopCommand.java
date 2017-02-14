@@ -13,6 +13,8 @@ package org.usfirst.frc5933.Caroline.commands;
 import org.usfirst.frc5933.Caroline.OI;
 import org.usfirst.frc5933.Caroline.Robot;
 
+import org.usfirst.frc5933.Caroline.commands.ShudderCommand;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -47,6 +49,11 @@ public class DefaultTeleopCommand extends Command {
         } else {
             Robot.driveTrainSystem.arcadeDrive(Robot.oi.driverJoystick);
         }
+        
+        
+        driverJoystick.getPOV(); //right is 90, left is 270
+        
+        subsystemJoystick.getPOV(); 
     }
 
     // Make this return true when this Command no longer needs to run execute()
