@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -30,22 +31,34 @@ public class DriveTrainSystem extends Subsystem {
 	public final static float kPeakVoltage = 12;
 
 	private boolean in_low_gear_ = false;
-	private boolean is_shifting_ = false;
 
-	public final static double kLowGearMin = 0;
-	public final static double kLowGearMax = 5;
+	private final static boolean leftSideInverted = false;
+	private final static boolean rightSideInverted = false;
 
-	public final static double kHighGearMin = 165;
-	public final static double kHighGearMax = 170;
+	public final static double kLowGearMin = 0.6; // These are tested values.
+													// the set() uses a 0.0 -
+													// 1.0 range
+	public final static double kLowGearMax = 0.525; // these are intermediate
+													// guestimated values. is
+													// more like maxLooseness
+
+	public final static double kHighGearMin = 0.05; // believe me, these values
+													// work
+	public final static double kHighGearMax = 0.085; // DON'T CHANGE
 
 	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;
 	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2;
 
 	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1;
 	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2;
-	
-	private final static double kMaximumMagnitudePercentVBusShudder = 0.9;
-	private final static double kMinimumMagnitudePercentVBusShudder = 0.2;
+
+	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;
+	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;
+
+	private final static double kVBusShudderIncrement = 0.1; // the incrementing
+																// step.
+																// generally 0.1
+
 	private double shudderMagnitude = 0.5;
 
 	public DriveTrainSystem() {
@@ -82,10 +95,12 @@ public class DriveTrainSystem extends Subsystem {
 
 	public void robotInit() {
 		configVoltages(kNominalVoltage, kPeakVoltage);
+		configReversed(leftSideInverted, rightSideInverted);
 		configFollower();
 	}
 
 	public void teleopInit() {
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 		enableBrakeMode(false);
 	}
 
@@ -117,97 +132,65 @@ public class DriveTrainSystem extends Subsystem {
 	private void enableBrakeMode(boolean enable) {
 		leftMasterMotor.enableBrakeMode(enable);
 		rightMasterMotor.enableBrakeMode(enable);
-
-		if (!Robot.is_sonny) {
-			leftSlave1Motor.enableBrakeMode(enable);
-			leftSlave2Motor.enableBrakeMode(enable);
-			rightSlave1Motor.enableBrakeMode(enable);
-			rightSlave2Motor.enableBrakeMode(enable);
-		}
+		leftSlave1Motor.enableBrakeMode(enable);
+		leftSlave2Motor.enableBrakeMode(enable);
+		rightSlave1Motor.enableBrakeMode(enable);
+		rightSlave2Motor.enableBrakeMode(enable);
 	}
 
 	private void configVoltages(float nominal, double peak) {
+		leftMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		leftMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		leftMasterMotor.configPeakOutputVoltage(peak, -peak);
+
+		rightMasterMotor.changeControlMode(TalonControlMode.PercentVbus);
 		rightMasterMotor.configNominalOutputVoltage(nominal, -nominal);
 		rightMasterMotor.configPeakOutputVoltage(peak, -peak);
 
-		if (!Robot.is_sonny) {
-			leftSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
-			leftSlave1Motor.configPeakOutputVoltage(peak, -peak);
-			leftSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
-			leftSlave2Motor.configPeakOutputVoltage(peak, -peak);
-			rightSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
-			rightSlave1Motor.configPeakOutputVoltage(peak, -peak);
-			rightSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
-			rightSlave2Motor.configPeakOutputVoltage(peak, -peak);
-		}
+		leftSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
+		leftSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
+		leftSlave1Motor.configPeakOutputVoltage(peak, -peak);
+
+		leftSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
+		leftSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
+		leftSlave2Motor.configPeakOutputVoltage(peak, -peak);
+
+		rightSlave1Motor.changeControlMode(TalonControlMode.PercentVbus);
+		rightSlave1Motor.configNominalOutputVoltage(nominal, -nominal);
+		rightSlave1Motor.configPeakOutputVoltage(peak, -peak);
+
+		rightSlave2Motor.changeControlMode(TalonControlMode.PercentVbus);
+		rightSlave2Motor.configNominalOutputVoltage(nominal, -nominal);
+		rightSlave2Motor.configPeakOutputVoltage(peak, -peak);
+	}
+
+	private void configReversed(boolean leftInvert, boolean rightInvert) {
+		leftMasterMotor.setInverted(leftInvert);
+		rightMasterMotor.setInverted(rightInvert);
 	}
 
 	private void configFollower() {
-		if (!Robot.is_sonny) {
-			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
-			leftSlave1Motor.set(leftMasterMotor.getDeviceID()); // tells the
-			// follower
-			// which master
-			// to follow.
-			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
-			leftSlave2Motor.set(leftMasterMotor.getDeviceID()); // tells the
-			// follower
-			// which master
-			// to follow.
-			rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
-			rightSlave1Motor.set(rightMasterMotor.getDeviceID()); // tells the
-			// follower
-			// which
-			// master to
-			// follow.
-			rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
-			rightSlave2Motor.set(rightMasterMotor.getDeviceID()); // tells the
-			// follower
-			// which
-			// master to
-			// follow.
-		}
+		leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
+		leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+		leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
+		leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+		rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
+		rightSlave1Motor.set(rightMasterMotor.getDeviceID());
+		rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
+		rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 	}
 
-
-	private void adjustGearing() {
-		boolean left_is_done = false;
-		boolean right_is_done = false;
+	private void adjustGearing() { // low goes to high and high goes to low.
+									// Automagically.
+		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 		if (inLowGear()) {
-			double leftAngle = leftShifter.getAngle(); 
-			if (!(leftAngle >= kLowGearMin) && !(leftAngle <= kLowGearMax)) {
-				leftShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
-			} else {
-				left_is_done = true;
-			}
-
-			double rightAngle = rightShifter.getAngle(); 
-			if (!(rightAngle >= kLowGearMin) && !(rightAngle <= kLowGearMax)) {
-				rightShifter.setAngle((kLowGearMax - kLowGearMin) / 2);
-			} else {
-				right_is_done = true;
-			}
-			is_shifting_ = left_is_done && right_is_done;
+			leftShifter.set(kLowGearMin); // this should work without feedback
+			rightShifter.set(kLowGearMin);
 		} else {
-			double leftAngle = leftShifter.getAngle(); 
-			if (!(leftAngle >= kHighGearMin) && !(leftAngle <= kHighGearMax)) {
-				leftShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
-			} else {
-				left_is_done = true;
-			}
-
-			double rightAngle = rightShifter.getAngle(); 
-			if (!(rightAngle >= kHighGearMin) && !(rightAngle <= kHighGearMax)) {
-				rightShifter.setAngle((kHighGearMax - kHighGearMin) / 2);
-			} else {
-				right_is_done = true;
-			}
-			is_shifting_ = left_is_done && right_is_done;
+			leftShifter.set(kHighGearMax);
+			rightShifter.set(kHighGearMax);
 		}
 	}
-
 
 	public void teleopPeriodic() {
 		adjustGearing();
@@ -222,36 +205,32 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void shift() {
-		if (is_shifting_)
-			return;
-
-		is_shifting_ = true;
 		in_low_gear_ = !in_low_gear_;
 	}
-	// TODO: Test out GearShifting and make sure that the angles for the servos work. 
 
-
-	public void shudder_left(){
-		set(shudderMagnitude,-shudderMagnitude);
+	public void shudder_left() {
+		set(-shudderMagnitude, shudderMagnitude);
 	}
 
-	public void shudder_right(){
-		set(shudderMagnitude,-shudderMagnitude);
+	public void shudder_right() {
+		set(shudderMagnitude, -shudderMagnitude);
 	}
-	
-	public void incrementShudder(){
-		if(shudderMagnitude > kMaximumMagnitudePercentVBusShudder){
+
+	public void incrementShudder() {
+		if (shudderMagnitude > kMaximumMagnitudePercentVBusShudder) {
 			shudderMagnitude = kMaximumMagnitudePercentVBusShudder;
-		}else{
-			shudderMagnitude ++;
+		} else {
+			shudderMagnitude += kVBusShudderIncrement;
 		}
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
-	
-	public void decrementShudder(){
-		if(shudderMagnitude < kMinimumMagnitudePercentVBusShudder){
+
+	public void decrementShudder() {
+		if (shudderMagnitude < kMinimumMagnitudePercentVBusShudder) {
 			shudderMagnitude = kMinimumMagnitudePercentVBusShudder;
-		}else{
-			shudderMagnitude --;
+		} else {
+			shudderMagnitude -= kVBusShudderIncrement;
 		}
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
 }
