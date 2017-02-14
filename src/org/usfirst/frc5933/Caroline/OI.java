@@ -104,9 +104,9 @@ public class OI {
         startButton = new JoystickButton(driverJoystick, 8);
         startButton.whenPressed(new NullCommand());
         lToggle = new JoystickButton(driverJoystick, 9);
-        lToggle.whileHeld(new NullCommand());
+        lToggle.whileHeld(new AgitateFaster());
         rToggle = new JoystickButton(driverJoystick, 10);
-        rToggle.whileHeld(new NullCommand());
+        rToggle.whileHeld(new AgitateSlower());
         lBumper = new JoystickButton(driverJoystick, 5);
         lBumper.whileHeld(new NullCommand());
         backButton = new JoystickButton(driverJoystick, 7);

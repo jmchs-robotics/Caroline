@@ -561,7 +561,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: NullCommand
+          value: AgitateSlower
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -590,7 +590,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: NullCommand
+          value: AgitateFaster
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -1050,7 +1050,7 @@ Children:
     Base: Command
     Name: FrontFlapClose
   - Children: []
-    Properties: &id017
+    Properties: &id019
       Parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
         name: Parameters
@@ -1111,6 +1111,42 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: HopperSystem}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: &id016 []
+        name: Parameter presets
+        validators: null
+        value: *id016
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: false}
+    Base: Command
+    Name: AgitateFaster
+  - Children: []
+    Properties:
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value: []
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: HopperSystem}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: &id017 []
+        name: Parameter presets
+        validators: null
+        value: *id017
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: false}
+    Base: Command
+    Name: AgitateSlower
+  - Children: []
+    Properties:
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value: []
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Requires, type: Subsystem, validators: null, value: FlyWheelSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
@@ -1154,10 +1190,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: &id018 [List]
+        validators: &id020 [List]
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: &id019
+          command: &id021
             base:
               help: A command specifies an action that the robot can perform.
               name: Command
@@ -1172,14 +1208,14 @@ Children:
                 validators: null
                 value: []
               - !!robotbuilder.data.properties.ParameterSetProperty
-                default: &id016 []
+                default: &id018 []
                 name: Parameter presets
                 validators: null
-                value: *id016
+                value: *id018
               supports: {}
               type: Command
             name: DriveStraight
-            properties: *id017
+            properties: *id019
           hasMatch: true
           order: Sequential
           parameters:
@@ -1207,10 +1243,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: *id018
+        validators: *id020
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: *id019
+          command: *id021
           hasMatch: true
           order: Sequential
           parameters:
@@ -1238,10 +1274,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: *id018
+        validators: *id020
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: *id019
+          command: *id021
           hasMatch: true
           order: Sequential
           parameters:
