@@ -140,6 +140,8 @@ public class DriveTrainSystem extends Subsystem {
 		leftMasterMotor.reverseSensor(false);
 
 		leftMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
+		
+		leftMasterMotor.setEncPosition(0);
 	}
 
 	private void configRightFeedback(){
@@ -148,6 +150,8 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.reverseSensor(false);
 
 		rightMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
+		
+		rightMasterMotor.setEncPosition(0);
 	}
 
 	public void setVBusMode(){
@@ -163,11 +167,11 @@ public class DriveTrainSystem extends Subsystem {
 		case Auto_5F1_LeftLead:
 		//set control mode to motionMagic
 		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
-		
+		//configure the feedback device
 		configLeftFeedback();															
+		//configure the PID loop constants
+		configLeftPID(0,kFGain,kPGain,kIGain,kDGain);	
 
-		configLeftPID(0,kFGain,kPGain,kIGain,kDGain);									
-										
 		break;
 		case Auto_5F1_RightLead:			
 			rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);	
