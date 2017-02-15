@@ -82,12 +82,12 @@ public class DriveTrainSystem extends Subsystem {
 	/*http://www.andymark.com/super-sonic-2-speed-gearbox-p/am-3039_45.htm*/
 
 	//Calculate native units / 100 ms (the velocity calculation is perfomed every 100 ms)
-	//target velocity (as rotations/min) * (1 min/60sec) * (1 sec/10ms) * 1440 upm
-	//nu/100ms = (5000 / 60 / 10) * 1440
-	//calculate f gain (feed-forward) so 100% motor output is 5000 rpm (setpoint in code)
+	//target velocity (as rotations/min) * (1 min/60sec) * (1 sec/10ms) * 1440
+	//nu/100ms = (3000 / 60 / 10) * 1440
+	//calculate f gain (feed-forward) so 100% motor output is 3000 rpm (setpoint in code)
 	//f = 100% * (full forward output) / (native units per 100 ms)
-	//f = 100% *  1023 / ((5000 / 60 / 10) * 80)						IS TECHNICALLY INDEPENDENT FROM SYSTEM
-	private static final double kFGain = 0.0; //feed-forward gain
+	//f = 100% *  3000 / ((3000 * 360 / 60 / 10) * 1440)						IS TECHNICALLY INDEPENDENT FROM SYSTEM
+	private static final double kFGain = 0.001157407; //feed-forward gain
 
 	//calculated p gain = (percentThrottleToFixError * fullForwardOutput)/(maximumError)
 	//double until motor oscillates (too much p) or is adequate for system. ONLY TEST WITH SYSTEM DRAG ON MOTOR
@@ -149,34 +149,66 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.configEncoderCodesPerRev(kEncoderPerRev_);
 	}
 
-	private void setVBusMode(){
+	public void setVBusMode(){
 		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	}
 
-	private void configMotionMagicStraight(){
-		configFollower(DriveTrainConfigurations.Auto_5F1_LeftLead); //Totally "not" arbitrary choice
+	private void configMotionMagicStraight(DriveTrainConfigurations config){
+		configFollower(config); //Totally "not" arbitrary choice
 		//TODO: config a 2 follow 1 by 2 with flexible error ceilings (new method?)
 
+		switch(config){
+		case Auto_5F1_LeftLead:
 		//set control mode to motionMagic
-		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);		//comment this if using RightLead
-		//rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);	//comment this if using LeftLead
-
-		configLeftFeedback();															//comment this if using RightLead
-		//configRightFeedback();														//comment this if using LeftLead
-
-		configLeftPID(0,kFGain,kPGain,kIGain,kDGain);									//comment this if using RightLead
-		//configRightPID(0,kFGain,kPGain,kIGain,kDGain); 								//comment this if using LeftLead
-	}
-
-	private void configMotionMagicCurves(){
-		configFollower(DriveTrainConfigurations.Auto_2F1x2);
-		//TODO: Use flexible error ceilings?
-		//TODO: Link this with camera?
-		//TODO: Do we want to do a proportional slowing as we get closer? so VBus mode?
-
 		leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
-		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+		
+		configLeftFeedback();															
+
+		configLeftPID(0,kFGain,kPGain,kIGain,kDGain);									
+										
+		break;
+		case Auto_5F1_RightLead:			
+			rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);	
+			
+			configRightFeedback();														
+			
+			configRightPID(0,kFGain,kPGain,kIGain,kDGain); 
+		break;
+		case Auto_2F1x2:
+			leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+			rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
+			
+			configRightFeedback();
+			configLeftFeedback();
+			
+			configRightPID(0,kFGain,kPGain,kIGain,kDGain); 
+			configLeftPID(0,kFGain,kPGain,kIGain,kDGain); 
+			
+		break;
+		default:
+			//for safety don't do what you don't know.
+		break;
+		}
+	}
+	
+	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config){	//this method can be called by a command in its 'INIT' phase,
+		configMotionMagicStraight(config);													// and it will run the delivered rotations. The finish() method
+																							// can have a boolean statement checking whether this has
+		switch (config) {																	// actually reached the set rotations.
+		case Auto_5F1_LeftLead:
+			leftMasterMotor.set(rotations);
+		break;
+		case Auto_5F1_RightLead:
+			rightMasterMotor.set(rotations);
+		break;
+		case Auto_2F1x2:
+			leftMasterMotor.set(rotations);
+			rightMasterMotor.set(rotations);
+		default:
+			return false;
+		}
+		return true;
 	}
 
 	private void configLeftPID(int profileNumber, double f, double p, double i, double d) {
@@ -201,23 +233,6 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		rightMasterMotor.setD(d);
 	}
 
-	public void robotInit() {
-		configVoltages(kNominalVoltage, kPeakVoltage);
-		configReversed(leftSideInverted, rightSideInverted);
-		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
-	}
-
-	public void teleopInit() {
-		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
-		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
-		setVBusMode();
-		enableBrakeMode(false);
-	}
-
-	public void autonomousInit() {
-		enableBrakeMode(true);
-		configFollower(DriveTrainConfigurations.Auto_2F1x2);
-	}
 
 	public void set(double left, double right) {
 		leftMasterMotor.set(left);
@@ -364,7 +379,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 
 	private void adjustGearing() { // low goes to high and high goes to low.
 		// Automagically.
-		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());	//WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED //TODO: Remove later
+		//WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED //TODO: Remove later
 		if (inLowGear()) {
 			leftShifter.set(kLowGearMin); // this works without feedback
 			rightShifter.set(kLowGearMin);
@@ -374,24 +389,13 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		}
 	}
 
-	public void teleopPeriodic() {
-		adjustGearing();
-		SmartDashboard.putNumber("Left Side Speed: ", leftMasterMotor.getEncVelocity()); //TODO: Remove later
-		SmartDashboard.putNumber("Right Side Speed: ", rightMasterMotor.getEncVelocity()); //TODO: Remove later. Same with below line.
-		SmartDashboard.putNumber("Max Speed: ", Double.max(SmartDashboard.getNumber("Max Speed: ", 0.0), Double.max(leftMasterMotor.getEncVelocity(), rightMasterMotor.getEncVelocity())));
-		//the above line takes the speed from the left and the right, and from the smart dashboard, and gets the largest of them all for use next cycle.
-	}
-
-	public void autonomousPeriodic() {
-		adjustGearing();
-	}
-
 	public boolean inLowGear() {
 		return in_low_gear_;
 	}
 
 	public void shift() { //WE CANNOT SHIFT, NEVER CALL THIS
 		in_low_gear_ = !in_low_gear_;
+		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 	}
 
 	public void shudder_left() {
@@ -418,5 +422,35 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 			shudderMagnitude -= kVBusShudderIncrement;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
+	}
+	
+	
+	
+	//THE ROBOT, TELEOP, and AUTONOMOUS generated methods go here. So they're easy to find.
+	public void robotInit() {
+		configVoltages(kNominalVoltage, kPeakVoltage);
+		configReversed(leftSideInverted, rightSideInverted);
+		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
+	}
+
+	public void teleopInit() {
+		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
+		configFollower(DriveTrainConfigurations.Teleop_2F1x2);
+		setVBusMode();
+		enableBrakeMode(false);
+		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
+	}
+
+	public void autonomousInit() {
+		enableBrakeMode(true);
+		configFollower(DriveTrainConfigurations.Auto_2F1x2);
+	}
+	
+	public void teleopPeriodic() {
+		adjustGearing();
+	}
+
+	public void autonomousPeriodic() {
+		adjustGearing();
 	}
 }
