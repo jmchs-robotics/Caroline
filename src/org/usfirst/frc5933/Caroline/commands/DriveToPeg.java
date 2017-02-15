@@ -37,6 +37,7 @@ public class DriveToPeg extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
+		//TODO: something useful, like connecting to visionPeg_? then using that data merged with a tankDrive to get there?
 	}
 
 	// Called repeatedly when this Command is scheduled to run

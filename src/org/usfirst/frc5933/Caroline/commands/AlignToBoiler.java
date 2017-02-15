@@ -37,7 +37,7 @@ public class AlignToBoiler extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		// TODO: Something useful
+		// TODO: Something useful, like connecting to/using visionBoiler_? then merging a tankDrive and the packet return data, or flyWheel and data?
 	}
 
 	// Called repeatedly when this Command is scheduled to run
