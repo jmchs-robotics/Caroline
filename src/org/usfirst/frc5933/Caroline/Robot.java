@@ -120,9 +120,9 @@ public class Robot extends IterativeRobot {
 		hopperSystem.robotInit();
 		driveTrainSystem.robotInit();
 
-		if (vision_ != null) {
-			if (!vision_.is_connected()) {
-				if (!vision_.connect()) {
+		if (visionBoiler_ != null) {
+			if (!visionBoiler_.is_connected()) {
+				if (!visionBoiler_.connect()) {
 					if (show_debug_vision) {
 						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
 					}
@@ -134,6 +134,20 @@ public class Robot extends IterativeRobot {
 			}
 		}
 
+		if (visionPeg_ != null) {
+			if (!visionPeg_.is_connected()) {
+				if (!visionPeg_.connect()) {
+					if (show_debug_vision) {
+						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
+					}
+				} else {
+					if (show_debug_vision) {
+						System.out.println("Connected. No mayo for me.");
+					}
+				}
+			}
+		}
+		
 		configAutonomousCommand();
 	}
 
@@ -142,11 +156,21 @@ public class Robot extends IterativeRobot {
 	 * to reset subsystems before shutting down.
 	 */
 	public void disabledInit() {
-		if (vision_ != null) {
+		if (visionBoiler_ != null) {
 			try {
-				vision_.stoprunning();
-				vision_.join();
-				vision_ = null;
+				visionBoiler_.stoprunning();
+				visionBoiler_.join();
+				visionBoiler_ = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (visionPeg_ != null) {
+			try {
+				visionPeg_.stoprunning();
+				visionPeg_.join();
+				visionPeg_ = null;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

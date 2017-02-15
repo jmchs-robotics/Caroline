@@ -42,7 +42,8 @@ public class DriveStraight extends Command {
 	// Called just before this Command runs the first time
 	protected void initialize() {
 		if (usePresets_) {
-			// TODO:
+			// TODO: use MotionMagic Drive Straight
+			Robot.driveTrainSystem.setStraightMotionMagic(feetPreset_, Auto_5F1);
 		} else {
 			setTimeout(10);
 		}
