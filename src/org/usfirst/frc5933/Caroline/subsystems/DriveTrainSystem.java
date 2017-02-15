@@ -27,7 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class DriveTrainSystem extends Subsystem {
-	private enum DriveTrainConfigurations {Auto_5F1_RightLead,Auto_5F1_LeftLead,Teleop_2F1x2,Auto_2F1x2};
+	
+	public enum DriveTrainConfigurations {Auto_5F1_RightLead,Auto_5F1_LeftLead,Teleop_2F1x2,Auto_2F1x2};
 
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
@@ -210,6 +211,35 @@ public class DriveTrainSystem extends Subsystem {
 		}
 		return true;
 	}
+	
+	public boolean goStraightMotionMagic(double rotations, DriveTrainConfigurations config){
+		switch (config) {																	
+		case Auto_5F1_LeftLead:
+			leftMasterMotor.set(rotations);
+			
+			if(leftMasterMotor.getClosedLoopError() == 0){	//*in whiny voice* are we there yet?
+				return true;
+			}
+		break;
+		case Auto_5F1_RightLead:
+			rightMasterMotor.set(rotations);
+			
+			if(rightMasterMotor.getClosedLoopError() == 0){	//*in whiny voice* are we there yet?
+				return true;
+			}
+		break;
+		case Auto_2F1x2:
+			leftMasterMotor.set(rotations);
+			rightMasterMotor.set(rotations);
+			
+			if(leftMasterMotor.getClosedLoopError() == 0 && rightMasterMotor.getClosedLoopError() == 0){	//*in whiny voice* are we there yet?
+				return true;
+			}
+		default:
+			return true; //when this method is 'finished' running return true. So, if the config is bad, get out of here.
+		}
+		return false;	//you obviously ain't there yet.
+	}
 
 	private void configLeftPID(int profileNumber, double f, double p, double i, double d) {
 		/*set closed loop gains in profile 0 or profile 1 only*/
@@ -377,6 +407,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		}
 	}
 
+	//GEARING BASED METHODS BELOW HERE
 	private void adjustGearing() { // low goes to high and high goes to low.
 		// Automagically.
 		//WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED //TODO: Remove later
@@ -398,6 +429,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 	}
 
+	//SHUDDER METHODS BELOW HERE
 	public void shudder_left() {
 		set(-shudderMagnitude, shudderMagnitude);
 	}
