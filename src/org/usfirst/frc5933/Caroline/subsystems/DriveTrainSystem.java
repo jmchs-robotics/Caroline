@@ -193,7 +193,7 @@ public class DriveTrainSystem extends Subsystem {
 	}
 	
 	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config){	//this method can be called by a command in its 'INIT' phase,
-		configMotionMagicStraight(config);													// and it will run the delivered degrees. The finish() method
+		configMotionMagicStraight(config);													// and it will run the delivered rotations. The finish() method
 																							// can have a boolean statement checking whether this has
 		switch (config) {																	// actually reached the set rotations.
 		case Auto_5F1_LeftLead:
