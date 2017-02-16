@@ -25,6 +25,7 @@ public class HopperSystem extends Subsystem {
 	public final static double kAgitatorIncrement = 0.05;
 	public final static double kAgitatorMin = 0;
 	public final static double kAgitatorMax = 0.8;
+	public final static double kAgitatorInitSpeed = 0.5;
 	
 	private double agitatorSpeed_ = 0; 
 
@@ -80,6 +81,7 @@ public class HopperSystem extends Subsystem {
 
 	public void toggle() {
 		running_ = !running_;
+		agitatorSpeed_ = kAgitatorInitSpeed;
 	}
 
 	public boolean isRunnning() {
