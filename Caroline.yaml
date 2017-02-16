@@ -387,13 +387,13 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: NullCommand
+          value: ToggleShootingVision
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
           name: When to Run
           validators: null
-          value: whileHeld
+          value: whenPressed
       Base: Joystick Button
       Name: XButton
     - Children: []
@@ -1050,7 +1050,7 @@ Children:
     Base: Command
     Name: FrontFlapClose
   - Children: []
-    Properties: &id019
+    Properties: &id017
       Parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
         name: Parameters
@@ -1113,10 +1113,10 @@ Children:
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Requires, type: Subsystem, validators: null, value: HopperSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
-        default: &id016 []
+        default: []
         name: Parameter presets
         validators: null
-        value: *id016
+        value: []
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
@@ -1131,10 +1131,10 @@ Children:
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Requires, type: Subsystem, validators: null, value: HopperSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
-        default: &id017 []
+        default: []
         name: Parameter presets
         validators: null
-        value: *id017
+        value: []
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
@@ -1190,10 +1190,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: &id020 [List]
+        validators: &id018 [List]
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: &id021
+          command: &id019
             base:
               help: A command specifies an action that the robot can perform.
               name: Command
@@ -1208,14 +1208,14 @@ Children:
                 validators: null
                 value: []
               - !!robotbuilder.data.properties.ParameterSetProperty
-                default: &id018 []
+                default: &id016 []
                 name: Parameter presets
                 validators: null
-                value: *id018
+                value: *id016
               supports: {}
               type: Command
             name: DriveStraight
-            properties: *id019
+            properties: *id017
           hasMatch: true
           order: Sequential
           parameters:
@@ -1243,10 +1243,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: *id020
+        validators: *id018
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: *id021
+          command: *id019
           hasMatch: true
           order: Sequential
           parameters:
@@ -1274,10 +1274,10 @@ Children:
       Commands: !!robotbuilder.data.properties.ListProperty
         default: []
         name: Commands
-        validators: *id020
+        validators: *id018
         value:
         - !!robotbuilder.data.CommandGroupEntry
-          command: *id021
+          command: *id019
           hasMatch: true
           order: Sequential
           parameters:
@@ -1442,7 +1442,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: None}
+        name: Requires, type: Subsystem, validators: null, value: FlyWheelSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -1451,12 +1451,12 @@ Children:
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
-    Name: ShudderCommand
+    Name: ToggleShootingVision
   Properties: {}
   Base: Commands
   Name: Commands
 Properties:
-  Eclipse Workspace: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\decla\workspace',
+  Eclipse Workspace: !!robotbuilder.data.properties.FileProperty {default: /Users/jon/workspace,
     extension: null, folder: true, name: Eclipse Workspace, validators: null, value: ../}
   Export Commands: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Commands, validators: null, value: true}
@@ -1475,7 +1475,7 @@ Properties:
     name: Export Subsystems, validators: null, value: true}
   Simulation World File: !!robotbuilder.data.properties.StringProperty {default: /usr/share/frcsim/worlds/GearsBotDemo.world,
     name: Simulation World File, validators: null, value: /usr/share/frcsim/worlds/GearsBotDemo.world}
-  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\decla\',
+  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: /Users/jon/,
     extension: null, folder: true, name: Wiring file location, validators: null, value: ./}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: DefaultAutonomousCommand}
