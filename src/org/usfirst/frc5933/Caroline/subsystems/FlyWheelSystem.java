@@ -68,7 +68,7 @@ public class FlyWheelSystem extends Subsystem {
 	// f = 100% * (full forward output) / (native units per 100 ms)
 	// f = 100% * 1023 / ((5000 / 60 / 10) * 80) IS TECHNICALLY INDEPENDENT FROM
 	// SYSTEM
-	private static final double kFGain = 1.53; // feed-forward gain
+	private static final double kFGain = 1.5345; // feed-forward gain
 
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
