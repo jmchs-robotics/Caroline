@@ -56,34 +56,46 @@ public class SocketVision extends Thread {
 			packet.setLength(data_.length);
 			socket_.receive(packet);
 			if (packet.getData().length > 0) {
-				// TODO: Parse the data and set the direction and degrees
+				/*
+				 * Once the packet has been received and proven
+				 * to have some data in it, the parsing begins.
+				 * First, get the 'stuff' from the packet. Then
+				 * start standardization and splitting. Finally,
+				 * use the indices of appropriate data (as shown
+				 * in the example) to share the new info with
+				 * the rest of the robot. Since these are both
+				 * threaded, synchronization is an issue, but
+				 * is handled nicely later on.
+				 */
 
 				String stuffInThePacket = new String(packet.getData(), 0, packet.getLength());
 
-				// String contains: x position, y, width, distance, L/C/R
-				// e.g. "-100.14,20.33,15.75,172.56,L "
+				// String contains:: Identifier: x position, y, width, distance, L/C/R
+				// e.g. "Peg found at: -100.14,20.33,15.75,172.56,L "
 				stuffInThePacket = stuffInThePacket.toLowerCase(); // standardize
 																	// everything.
 																	// Just in
 																	// case.
-
+				
 				if (Robot.show_debug_vision) {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
-
-				// now is "-100.14,20.33,15.75,172.56,l "
-				String[] packetParsing = stuffInThePacket.split(","); // now is:
-																		// {"-100.14","20.33","15.75","172.56","l
+				String[] noIdentifier = stuffInThePacket.split(":");	//take out the identifying string
+																		//to make the rest of processing easier
+				
+				// now is {"peg found at"," -100.14,20.33,15.75,172.56,l "}
+				String[] packetParsing = noIdentifier[1].split(","); // now is:
+																		// {" -100.14","20.33","15.75","172.56","l
 																		// "}
 
 				int count = 0; // keep track of the index in the for loop below
 				for (String x : packetParsing) {
-					packetParsing[count] = x.trim(); // take the spaces out.
-														// just in case.
+					packetParsing[count] = x.trim(); // take the spaces out,
+														// just in case there needs to be other recognition later
 					count++; // increment the index
 				}
 				// now is: {"-100.14","20.33","15.75","172.56","l"} Look at the
-				// last index for the difference
+				// last and first indices (pl. index) for the difference
 
 				double ldegrees_x = Double.parseDouble(packetParsing[0]); // following
 																			// example,
@@ -120,6 +132,7 @@ public class SocketVision extends Thread {
 					distance = ldistance;
 					direction_ = ldirection_;
 				}
+				
 				if (Robot.show_debug_vision) {
 					System.out.println("Done got that data! " + stuffInThePacket);
 				}
@@ -135,7 +148,7 @@ public class SocketVision extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public void run() {	//this is the threaded method that constantly checks and reads the socket.
 		keep_running = true;
 		while (keep_running) {
 			if (!is_connected()) {

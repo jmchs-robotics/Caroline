@@ -70,11 +70,9 @@ public class ClimbingSystem extends Subsystem {
 		//tests for the 'case' of claw_running_
 		if (claw_running_ == 1) {	//case 1: go forward. at full
 			climbingClawMotor.set(1);
-		} else if (claw_running_ == 2){ //case 2: stop it.
-			climbingClawMotor.set(0);
 		} else if (claw_running_ == 3){ //case 3: go backwards
 			climbingClawMotor.set(-1);
-		}else{ 							//case everything else: stop the motor. just in case. ;)
+		}else{ 							//case everything else (either 0 or 2): stop the motor. just in case. ;)
 			climbingClawMotor.set(0);
 		}
 
@@ -91,8 +89,13 @@ public class ClimbingSystem extends Subsystem {
 		running_ = !running_;
 	}
 
-	public void toggleClaw() {
-		claw_running_ ++;
+	/*
+	 * toggleClaw is called at a button press to toggle through the 4 states
+	 * of what the claw motor will/can do. Hardware limit switches stop it
+	 * so the code doesn't have to.
+	 */
+	public void toggleClaw() {	
+		claw_running_ ++;		
 		SmartDashboard.putNumber("Climbing Motor Running Case ", claw_running_);
 
 		if(claw_running_ > 3)

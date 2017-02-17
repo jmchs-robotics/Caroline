@@ -67,12 +67,12 @@ public class Robot extends IterativeRobot {
 
 	public Robot() {
 		super();
-		visionBoiler_ = new SocketVision("10.59.33.25", 59330);
+		visionBoiler_ = new SocketVision("10.59.33.25", 5800);
 		if (show_debug_vision) {
 			System.out.println("Vision to Boiler started.");
 		}
 		
-		visionPeg_ = new SocketVision("10.59.33.25", 59331);
+		visionPeg_ = new SocketVision("10.59.33.25", 5801);
 		if(show_debug_vision) {
 			System.out.println("Vision to Peg started.");
 		}
