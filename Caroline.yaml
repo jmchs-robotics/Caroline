@@ -890,7 +890,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: ToggleClaw
+          value: StopFlaps
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -1452,6 +1452,24 @@ Children:
         name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
     Name: ToggleShootingVision
+  - Children: []
+    Properties:
+      Parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Parameters
+        validators: null
+        value: []
+      Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Requires, type: Subsystem, validators: null, value: GearCollectionSystem}
+      Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
+        default: &id020 []
+        name: Parameter presets
+        validators: null
+        value: *id020
+      Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
+        name: Button on SmartDashboard, validators: null, value: true}
+    Base: Command
+    Name: StopFlaps
   Properties: {}
   Base: Commands
   Name: Commands
