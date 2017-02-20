@@ -42,10 +42,10 @@ public class FlyWheelSystem extends Subsystem {
 	private double speed_ = 0;
 
 	public boolean vbus_mode = false;
-	private boolean running_ = true;
-	private final static boolean tuning_ = false;
+	private boolean running_ = false;
+	private final static boolean tuning_ = true;
 	private boolean using_vision = false;
-	
+	private final static boolean isWheelInverted = true;
 	/*
 	 * from example at
 	 * https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/
@@ -74,7 +74,7 @@ public class FlyWheelSystem extends Subsystem {
 	// fullForwardOutput)/(maximumError)
 	// double until motor oscillates (too much p) or is adequate for system.
 	// ONLY TEST WITH SYSTEM DRAG ON MOTOR
-	private static final double kPGain = 0.0; // p gain
+	private static final double kPGain = 0.22; // p gain
 
 	// smoothes motion from error to setpoint.
 	// Start with 10 * pgain
@@ -110,7 +110,7 @@ public class FlyWheelSystem extends Subsystem {
 		configVoltages(kNominalVoltage, kPeakVoltage);
 		configFeedback();
 		configPID(0, kFGain, kPGain, kIGain, kDGain);
-		//motionMagicTestInit();
+		flyWheelMotor.setInverted(isWheelInverted);
 	}
 
 	private void configPID(int profileNumber, double f, double p, double i, double d) {
@@ -133,10 +133,7 @@ public class FlyWheelSystem extends Subsystem {
 		SmartDashboard.putNumber("P Gain ", kPGain);
 		SmartDashboard.putNumber("I Gain ", kIGain);
 		SmartDashboard.putNumber("D Gain ", kDGain);
-		SmartDashboard.putBoolean("Tuning PID: ", tuning_);
-
-		// testing motion magic
-		//flyWheelMotor.setPosition(0);
+		SmartDashboard.putBoolean("Tuning PID: ", tuning_); 
 	}
 
 	public void autonomousInit() {
@@ -149,7 +146,7 @@ public class FlyWheelSystem extends Subsystem {
 
 	private void configFeedback() {
 		flyWheelMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		flyWheelMotor.reverseSensor(false); // Sensor needs to read same
+		flyWheelMotor.reverseSensor(isWheelInverted); // Sensor needs to read same
 											// direction as motor spins up
 											// (positive-positive).
 		flyWheelMotor.configEncoderCodesPerRev(kEncoderPerRev_);
@@ -195,7 +192,6 @@ public class FlyWheelSystem extends Subsystem {
 
 	public void setSpeedMode() {
 		flyWheelMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
-		flyWheelMotor.setInverted(false);
 		vbus_mode = false;
 	}
 
@@ -219,13 +215,13 @@ public class FlyWheelSystem extends Subsystem {
 		
 		flyWheelMotor.set(speed_);
 		// TODO: Remove later
-		//SmartDashboard.putNumber("Given speed:", speed_);
-//		SmartDashboard.putNumber("Encoder speed:", flyWheelMotor.getSpeed());
-//		SmartDashboard.putNumber("Closed Loop Error:", flyWheelMotor.getClosedLoopError());
-//		SmartDashboard.putNumber("Motor Output Voltage:",
-//				flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
-//		SmartDashboard.putNumber("Maximum Out Error",
-//				Double.max(flyWheelMotor.getError(), SmartDashboard.getNumber("Maximum Out Error", 0.0)));
+		SmartDashboard.putNumber("Given speed:", speed_);
+		SmartDashboard.putNumber("Encoder speed:", flyWheelMotor.getSpeed());
+		SmartDashboard.putNumber("Closed Loop Error:", flyWheelMotor.getClosedLoopError());
+		SmartDashboard.putNumber("Motor Output Voltage:",
+				flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
+		SmartDashboard.putNumber("Maximum Out Error",
+				Double.max(flyWheelMotor.getError(), SmartDashboard.getNumber("Maximum Out Error", 0.0)));
 
 		if (tuning_) {
 			double fg = SmartDashboard.getNumber("F Gain ", 0.0);
@@ -298,8 +294,6 @@ public class FlyWheelSystem extends Subsystem {
 			goVbus();
 		} else {
 			goSpeed();
-				// testing motion magic mode:
-				//motionMagicTest();
 		}
 	}
 
@@ -324,21 +318,6 @@ public class FlyWheelSystem extends Subsystem {
 		vbus_mode = !vbus_mode;
 		SmartDashboard.putBoolean("Vbus mode: ", vbus_mode);
 	}
-
-	/*public void motionMagicTestInit() {
-		flyWheelMotor.setMotionMagicAcceleration(1200);
-		flyWheelMotor.setMotionMagicCruiseVelocity(1200);
-		flyWheelMotor.setPosition(0);
-	}*/
-
-	/*public void motionMagicTest() {
-		flyWheelMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
-		flyWheelMotor.set(120); // always in native units
-		SmartDashboard.putNumber("Given pos:", vbus_);
-		SmartDashboard.putNumber("Encoder speed:", flyWheelMotor.getSpeed());
-		SmartDashboard.putNumber("Closed Loop Error:", flyWheelMotor.getClosedLoopError());
-		SmartDashboard.putNumber("Encoder Pos:", flyWheelMotor.getPosition());
-	}*/
 
 	public double maintainFlywheelSpeed(double inches) {
 		double rpm = FlyWheelSystem.inchesToRpm(inches);

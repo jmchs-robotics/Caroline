@@ -196,13 +196,19 @@ Children:
   - Children:
     - Children: []
       Properties:
-        CAN ID: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id006
-          default: '2'
-          name: CAN ID
-          validators: *id007
-          value: '12'
-      Base: CAN Talon
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id001
+          default: Talon
+          name: Type
+          validators: null
+          value: Victor
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id002
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id003
+          value: '0'
+      Base: Speed Controller
       Name: AgitiatorMotor
     Properties:
       Default command parameters: !!robotbuilder.data.properties.ParametersProperty
@@ -387,7 +393,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: ToggleShootingVision
+          value: BackFlapOpen
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -416,7 +422,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: ToggleGearShifter
+          value: FrontFlapOpen
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -445,7 +451,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: FlyWheelMode
+          value: BackFlapClose
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -474,7 +480,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: ToggleVacuum
+          value: FrontFlapClose
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -509,7 +515,7 @@ Children:
           default: whileHeld
           name: When to Run
           validators: null
-          value: whileHeld
+          value: whenPressed
       Base: Joystick Button
       Name: BackButton
     - Children: []
@@ -561,7 +567,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: AgitateSlower
+          value: AlignToBoiler
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -590,7 +596,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: AgitateFaster
+          value: DriveToPeg
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -619,13 +625,13 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: NullCommand
+          value: StopFlaps
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
           name: When to Run
           validators: null
-          value: whenPressed
+          value: whileHeld
       Base: Joystick Button
       Name: StartButton
     Properties:
@@ -658,7 +664,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: BackFlapOpen
+          value: FlyWheelMode
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -687,7 +693,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: FrontFlapOpen
+          value: AgitateFaster
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -716,7 +722,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: FrontFlapClose
+          value: AgitateSlower
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -745,7 +751,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: BackFlapClose
+          value: ToggleShootingVision
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld
@@ -890,7 +896,7 @@ Children:
           name: Command
           type: Command
           validators: *id012
-          value: StopFlaps
+          value: ToggleClaw
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id013
           default: whileHeld

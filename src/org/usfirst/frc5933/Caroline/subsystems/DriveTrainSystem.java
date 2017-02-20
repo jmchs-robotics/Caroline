@@ -55,8 +55,8 @@ public class DriveTrainSystem extends Subsystem {
 	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1; //mode, following Y motors who act as 'master'
 	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2; //motors, by Z 'modules'. For example, Rosie's
 	//drivetrain ran as a 1 follow 1 by 2 setup,
-	private final static double kMaximumMagnitudePercentVBusShudder = 9.0;				 //with both the left and right sides (the two
-	private final static double kMinimumMagnitudePercentVBusShudder = 2.0;				 //'modules') consisting of 1 'master' motor and
+	private final static double kMaximumMagnitudePercentVBusShudder = 0.90;				 //with both the left and right sides (the two
+	private final static double kMinimumMagnitudePercentVBusShudder = 0.20;				 //'modules') consisting of 1 'master' motor and
 	//1 follower motor, hence the 1f1x2 setup (abbreviated)
 	private final static double kVBusShudderIncrement = 0.1; // the incrementing
 	// step.
@@ -366,13 +366,13 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 		case Auto_5F1_RightLead: //TODO: Does the left side need to be inverted?
 		{
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
-			leftSlave1Motor.set(leftMasterMotor.getDeviceID());
+			leftSlave1Motor.set(rightMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
-			leftSlave2Motor.set(leftMasterMotor.getDeviceID());
+			leftSlave2Motor.set(rightMasterMotor.getDeviceID());
 			rightSlave1Motor.changeControlMode(TalonControlMode.Follower);
-			rightSlave1Motor.set(leftMasterMotor.getDeviceID());
+			rightSlave1Motor.set(rightMasterMotor.getDeviceID());
 			rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
-			rightSlave2Motor.set(leftMasterMotor.getDeviceID());
+			rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 
 			leftMasterMotor.changeControlMode(TalonControlMode.Follower);
 			leftMasterMotor.set(rightMasterMotor.getDeviceID());
@@ -405,7 +405,7 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 			rightSlave2Motor.changeControlMode(TalonControlMode.Follower);
 			rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 
-			SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
+			SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2 -- defaulted");
 		}
 		break;
 		}
@@ -435,27 +435,27 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 
 	//SHUDDER METHODS BELOW HERE
 	public void shudder_left() {
-		set(-shudderMagnitude, shudderMagnitude);
+		set(shudderMagnitude, shudderMagnitude);
 	}
 
 	public void shudder_right() {
-		set(shudderMagnitude, -shudderMagnitude);
+		set(-shudderMagnitude, -shudderMagnitude);
 	}
 
 	public void incrementShudder() {
+		shudderMagnitude += kVBusShudderIncrement;
+		
 		if (shudderMagnitude > kMaximumMagnitudePercentVBusShudder) {
 			shudderMagnitude = kMaximumMagnitudePercentVBusShudder;
-		} else {
-			shudderMagnitude += kVBusShudderIncrement;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}
 
 	public void decrementShudder() {
+		shudderMagnitude -= kVBusShudderIncrement;
+		
 		if (shudderMagnitude < kMinimumMagnitudePercentVBusShudder) {
 			shudderMagnitude = kMinimumMagnitudePercentVBusShudder;
-		} else {
-			shudderMagnitude -= kVBusShudderIncrement;
 		}
 		SmartDashboard.putNumber("Shudder Magnitude:", shudderMagnitude);
 	}

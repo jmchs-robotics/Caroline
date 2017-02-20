@@ -48,8 +48,8 @@ public class Robot extends IterativeRobot {
 	private Command autonomousCommand;
 
 	public static OI oi;
-	public static boolean show_debug_flywheel = false;
-	public static boolean show_debug_vision = false;
+	public static boolean show_debug_flywheel = true;
+	public static boolean show_debug_vision = true;
 
 	public static SocketVision visionBoiler_;
 	public static SocketVision visionPeg_;
