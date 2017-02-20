@@ -7,6 +7,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SocketVision extends Thread {
 	public static final String NADA = "nada";
 	public static final String RIGHT = "right";
@@ -80,6 +82,10 @@ public class SocketVision extends Thread {
 				if (Robot.show_debug_vision) {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
+				
+				if(!stuffInThePacket.contains(":"))	//make sure that this is a string you want with an unique character
+					return false;
+				
 				String[] noIdentifier = stuffInThePacket.split(":");	//take out the identifying string
 																		//to make the rest of processing easier
 				
@@ -135,6 +141,7 @@ public class SocketVision extends Thread {
 				
 				if (Robot.show_debug_vision) {
 					System.out.println("Done got that data! " + stuffInThePacket);
+					SmartDashboard.putString("Port " + port_ + " output: ", stuffInThePacket);
 				}
 				return true;
 			}
