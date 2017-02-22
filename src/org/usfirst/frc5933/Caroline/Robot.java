@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	private Command autonomousCommand;
 
 	public static OI oi;
-	public static boolean show_debug_flywheel = true;
+	public static boolean show_debug_flywheel = false;
 	public static boolean show_debug_vision = true;
 
 	public static SocketVision visionBoiler_;
@@ -67,18 +67,6 @@ public class Robot extends IterativeRobot {
 
 	public Robot() {
 		super();
-		visionBoiler_ = new SocketVision("10.59.33.25", 5800);
-		if (show_debug_vision) {
-			System.out.println("Vision to Boiler started.");
-		}
-		
-		visionPeg_ = new SocketVision("10.59.33.25", 5801);
-		if(show_debug_vision) {
-			System.out.println("Vision to Peg started.");
-		}
-		
-		visionPeg_.start();
-		visionBoiler_.start();
 	}
 
 	/**
@@ -120,34 +108,7 @@ public class Robot extends IterativeRobot {
 		hopperSystem.robotInit();
 		driveTrainSystem.robotInit();
 
-		if (visionBoiler_ != null) {
-			if (!visionBoiler_.is_connected()) {
-				if (!visionBoiler_.connect()) {
-					if (show_debug_vision) {
-						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
-					}
-				} else {
-					if (show_debug_vision) {
-						System.out.println("Connected. No mayo for me.");
-					}
-				}
-			}
-		}
-
-		if (visionPeg_ != null) {
-			if (!visionPeg_.is_connected()) {
-				if (!visionPeg_.connect()) {
-					if (show_debug_vision) {
-						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
-					}
-				} else {
-					if (show_debug_vision) {
-						System.out.println("Connected. No mayo for me.");
-					}
-				}
-			}
-		}
-		
+				
 		configAutonomousCommand();
 	}
 
@@ -196,6 +157,51 @@ public class Robot extends IterativeRobot {
 
 		if (teleopCommand != null)
 			teleopCommand.cancel();
+		
+		if(visionBoiler_ == null){
+			visionBoiler_ = new SocketVision("10.59.33.255", 5800);
+			if (show_debug_vision) {
+				System.out.println("Vision to Boiler started.");
+			}
+		}
+
+		if(visionPeg_ == null){
+			visionPeg_ = new SocketVision("10.59.33.255", 5801);
+			if(show_debug_vision) {
+				System.out.println("Vision to Peg started.");
+			}
+		}
+		visionPeg_.start();
+		visionBoiler_.start();
+		
+		if (visionBoiler_ != null) {
+			if (!visionBoiler_.is_connected()) {
+				if (!visionBoiler_.connect()) {
+					if (show_debug_vision) {
+						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
+					}
+				} else {
+					if (show_debug_vision) {
+						System.out.println("Connected. No mayo for me.");
+					}
+				}
+			}
+		}
+
+		if (visionPeg_ != null) {
+			if (!visionPeg_.is_connected()) {
+				if (!visionPeg_.connect()) {
+					if (show_debug_vision) {
+						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
+					}
+				} else {
+					if (show_debug_vision) {
+						System.out.println("Connected. No mayo for me.");
+					}
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -232,6 +238,52 @@ public class Robot extends IterativeRobot {
 		if (teleopCommand != null) {
 			teleopCommand.start();
 		}
+		
+		if(visionBoiler_ == null){
+			visionBoiler_ = new SocketVision("10.59.33.255", 5800);
+			if (show_debug_vision) {
+				System.out.println("Vision to Boiler started.");
+			}
+		}
+
+		if(visionPeg_ == null){
+			visionPeg_ = new SocketVision("10.59.33.255", 5801);
+			if(show_debug_vision) {
+				System.out.println("Vision to Peg started.");
+			}
+		}
+		
+		visionPeg_.start();
+		visionBoiler_.start();
+		
+		if (visionBoiler_ != null) {
+			if (!visionBoiler_.is_connected()) {
+				if (!visionBoiler_.connect()) {
+					if (show_debug_vision) {
+						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
+					}
+				} else {
+					if (show_debug_vision) {
+						System.out.println("Connected. No mayo for me.");
+					}
+				}
+			}
+		}
+
+		if (visionPeg_ != null) {
+			if (!visionPeg_.is_connected()) {
+				if (!visionPeg_.connect()) {
+					if (show_debug_vision) {
+						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
+					}
+				} else {
+					if (show_debug_vision) {
+						System.out.println("Connected. No mayo for me.");
+					}
+				}
+			}
+		}
+
 	}
 
 	/**

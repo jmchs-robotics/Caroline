@@ -269,8 +269,8 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 
 
 	public void set(double left, double right) {
-		leftMasterMotor.set(left);
-		rightMasterMotor.set(right);
+		leftMasterMotor.set(-left);	//accommodate for the trippy drive train.
+		rightMasterMotor.set(right);//none needed here.
 	}
 
 	public void stop() {
@@ -435,11 +435,11 @@ https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/JAVA_VelocityClosed
 
 	//SHUDDER METHODS BELOW HERE
 	public void shudder_left() {
-		set(shudderMagnitude, shudderMagnitude);
+		set(-shudderMagnitude, shudderMagnitude);
 	}
 
 	public void shudder_right() {
-		set(-shudderMagnitude, -shudderMagnitude);
+		set(shudderMagnitude, -shudderMagnitude);
 	}
 
 	public void incrementShudder() {

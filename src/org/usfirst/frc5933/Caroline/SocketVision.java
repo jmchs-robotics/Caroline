@@ -24,7 +24,8 @@ public class SocketVision extends Thread {
 	private double degrees_x = 0;
 	private double degrees_y = 0;
 	private double degrees_width = 0;
-	private double distance = 0;
+	private double distanceHeight = 0;
+	private double distanceWidth = 0;
 
 	public SocketVision(String ip, int port) {
 		ip_ = ip;
@@ -83,7 +84,7 @@ public class SocketVision extends Thread {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
 				
-				if(!stuffInThePacket.contains(":"))	//make sure that this is a string you want with an unique character
+				if(!stuffInThePacket.contains(":"))	//make sure that this is a string you want by testing for an unique character
 					return false;
 				
 				String[] noIdentifier = stuffInThePacket.split(":");	//take out the identifying string
@@ -111,17 +112,19 @@ public class SocketVision extends Thread {
 																			// 20.33
 				double ldegrees_width = Double.parseDouble(packetParsing[2]); // is
 																				// 15.75
-				double ldistance = Double.parseDouble(packetParsing[3]); // is
+				double ldistanceW = Double.parseDouble(packetParsing[3]); // is
 																			// 172.56
-
+				double ldistanceH = Double.parseDouble(packetParsing[4]);	/*ADDED 2/21/17 due to small change in UpBoard code. 
+																			 *Example is still valid otherwise.
+																			 */
 				String ldirection_;
-				if (packetParsing[4].equalsIgnoreCase("l")) {
+				if (packetParsing[5].equalsIgnoreCase("l")) {
 					ldirection_ = LEFT;
 
-				} else if (packetParsing[4].equalsIgnoreCase("r")) {
+				} else if (packetParsing[5].equalsIgnoreCase("r")) {
 					ldirection_ = RIGHT;
 
-				} else if (packetParsing[4].equalsIgnoreCase("c")) {
+				} else if (packetParsing[5].equalsIgnoreCase("c")) {
 					ldirection_ = NADA;
 
 				} else {
@@ -135,7 +138,8 @@ public class SocketVision extends Thread {
 					degrees_x = ldegrees_x;
 					degrees_y = ldegrees_y;
 					degrees_width = ldegrees_width;
-					distance = ldistance;
+					distanceWidth = ldistanceW;
+					distanceHeight = ldistanceH;
 					direction_ = ldirection_;
 				}
 				
@@ -199,9 +203,15 @@ public class SocketVision extends Thread {
 		return tmp;
 	}
 
-	public synchronized double get_distance() {
-		double tmp = distance;
-		distance = 0;
+	public synchronized double get_distance_height() {
+		double tmp = distanceHeight;
+		distanceHeight = 0;
+		return tmp;
+	}
+	
+	public synchronized double get_distance_width() {
+		double tmp = distanceWidth;
+		distanceWidth = 0;
 		return tmp;
 	}
 }
