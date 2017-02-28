@@ -171,6 +171,8 @@ public class SocketVision extends Thread {
 
 	public void stoprunning() {
 		keep_running = false;
+		socket_.disconnect();
+		socket_.close();
 	}
 
 	// the below methods are the easiest way to access the data that was grabbed
