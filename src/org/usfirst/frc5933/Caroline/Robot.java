@@ -18,8 +18,8 @@ package org.usfirst.frc5933.Caroline;
 // TODO: Use encoders from the new gear boxes.
 // TODO: Add a TurnDegrees command.
 // TODO: Add sequential and parallel commands to autonomous commands.
-// TODO: Add field elements contants so that we can use them in calculations.
-// TODO: Add a lookup table (if neccesary) that allows us to map drive train encoder values to actual feet/inches.
+// TODO: Add field elements constants so that we can use them in calculations.
+// TODO: Add a lookup table (if necessary) that allows us to map drive train encoder values to actual feet/inches.
 // TODO: Do we need to take image recognition values and map to inches ?
 // TODO: Change UDP from broadcast to unicast.
 // TODO: Makes sure prefs work in dumb dashboard.
@@ -58,7 +58,6 @@ public class Robot extends IterativeRobot {
 	public static GearCollectionSystem gearCollectionSystem;
 	public static ClimbingSystem climbingSystem;
 	public static FlyWheelSystem flyWheelSystem;
-	public static BallCollectionSystem ballCollectionSystem;
 	public static HopperSystem hopperSystem;
 	public static DriveTrainSystem driveTrainSystem;
 	public static PowerSystem powerSystem;
@@ -79,7 +78,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem = new GearCollectionSystem();
 		climbingSystem = new ClimbingSystem();
 		flyWheelSystem = new FlyWheelSystem();
-		ballCollectionSystem = new BallCollectionSystem();
 		hopperSystem = new HopperSystem();
 		driveTrainSystem = new DriveTrainSystem();
 		powerSystem = new PowerSystem();
@@ -104,7 +102,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem.robotInit();
 		climbingSystem.robotInit();
 		flyWheelSystem.robotInit();
-		ballCollectionSystem.robotInit();
 		hopperSystem.robotInit();
 		driveTrainSystem.robotInit();
 
@@ -145,7 +142,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem.autonomousInit();
 		climbingSystem.autonomousInit();
 		flyWheelSystem.autonomousInit();
-		ballCollectionSystem.autonomousInit();
 		hopperSystem.autonomousInit();
 		driveTrainSystem.autonomousInit();
 		powerSystem.autonomousInit();
@@ -210,7 +206,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem.autonomousPeriodic();
 		climbingSystem.autonomousPeriodic();
 		flyWheelSystem.autonomousPeriodic();
-		ballCollectionSystem.autonomousPeriodic();
 		hopperSystem.autonomousPeriodic();
 		driveTrainSystem.autonomousPeriodic();
 		powerSystem.autonomousPeriodic();
@@ -222,7 +217,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem.teleopInit();
 		climbingSystem.teleopInit();
 		flyWheelSystem.teleopInit();
-		ballCollectionSystem.teleopInit();
 		hopperSystem.teleopInit();
 		driveTrainSystem.teleopInit();
 		powerSystem.teleopInit();
@@ -292,7 +286,6 @@ public class Robot extends IterativeRobot {
 		gearCollectionSystem.teleopPeriodic();
 		climbingSystem.teleopPeriodic();
 		flyWheelSystem.teleopPeriodic();
-		ballCollectionSystem.teleopPeriodic();
 		hopperSystem.teleopPeriodic();
 		driveTrainSystem.teleopPeriodic();
 		powerSystem.teleopPeriodic();
