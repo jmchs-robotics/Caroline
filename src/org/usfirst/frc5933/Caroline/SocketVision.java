@@ -60,45 +60,59 @@ public class SocketVision extends Thread {
 			socket_.receive(packet);
 			if (packet.getData().length > 0) {
 				/*
-				 * Once the packet has been received and proven
-				 * to have some data in it, the parsing begins.
-				 * First, get the 'stuff' from the packet. Then
-				 * start standardization and splitting. Finally,
-				 * use the indices of appropriate data (as shown
-				 * in the example) to share the new info with
-				 * the rest of the robot. Since these are both
-				 * threaded, synchronization is an issue, but
-				 * is handled nicely later on.
+				 * Once the packet has been received and proven to have some
+				 * data in it, the parsing begins. First, get the 'stuff' from
+				 * the packet. Then start standardization and splitting.
+				 * Finally, use the indices of appropriate data (as shown in the
+				 * example) to share the new info with the rest of the robot.
+				 * Since these are both threaded, synchronization is an issue,
+				 * but is handled nicely later on.
 				 */
 
 				String stuffInThePacket = new String(packet.getData(), 0, packet.getLength());
 
-				// String contains:: Identifier: x position, y, width, distance, L/C/R
+				// String contains:: Identifier: x position, y, width, distance,
+				// L/C/R
 				// e.g. "Peg found at: -100.14,20.33,15.75,172.56,L "
 				stuffInThePacket = stuffInThePacket.toLowerCase(); // standardize
 																	// everything.
 																	// Just in
 																	// case.
-				
+
 				if (Robot.show_debug_vision) {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
-				
-				if(!stuffInThePacket.contains(":"))	//make sure that this is a string you want by testing for an unique character
+
+				if (!stuffInThePacket.contains(":")) // make sure that this is a
+														// string you want by
+														// testing for an unique
+														// character
 					return false;
-				
-				String[] noIdentifier = stuffInThePacket.split(":");	//take out the identifying string
-																		//to make the rest of processing easier
-				
+
+				String[] noIdentifier = stuffInThePacket.split(":"); // take out
+																		// the
+																		// identifying
+																		// string
+																		// to
+																		// make
+																		// the
+																		// rest
+																		// of
+																		// processing
+																		// easier
+
 				// now is {"peg found at"," -100.14,20.33,15.75,172.56,l "}
 				String[] packetParsing = noIdentifier[1].split(","); // now is:
-																		// {" -100.14","20.33","15.75","172.56","l
+																		// {"
+																		// -100.14","20.33","15.75","172.56","l
 																		// "}
 
 				int count = 0; // keep track of the index in the for loop below
 				for (String x : packetParsing) {
 					packetParsing[count] = x.trim(); // take the spaces out,
-														// just in case there needs to be other recognition later
+														// just in case there
+														// needs to be other
+														// recognition later
 					count++; // increment the index
 				}
 				// now is: {"-100.14","20.33","15.75","172.56","l"} Look at the
@@ -114,9 +128,12 @@ public class SocketVision extends Thread {
 																				// 15.75
 				double ldistanceW = Double.parseDouble(packetParsing[3]); // is
 																			// 172.56
-				double ldistanceH = Double.parseDouble(packetParsing[4]);	/*ADDED 2/21/17 due to small change in UpBoard code. 
-																			 *Example is still valid otherwise.
-																			 */
+				double ldistanceH = Double.parseDouble(
+						packetParsing[4]); /*
+											 * ADDED 2/21/17 due to small change
+											 * in UpBoard code. Example is still
+											 * valid otherwise.
+											 */
 				String ldirection_;
 				if (packetParsing[5].equalsIgnoreCase("l")) {
 					ldirection_ = LEFT;
@@ -142,7 +159,7 @@ public class SocketVision extends Thread {
 					distanceHeight = ldistanceH;
 					direction_ = ldirection_;
 				}
-				
+
 				if (Robot.show_debug_vision) {
 					System.out.println("Done got that data! " + stuffInThePacket);
 					SmartDashboard.putString("Port " + port_ + " output: ", stuffInThePacket);
@@ -159,7 +176,8 @@ public class SocketVision extends Thread {
 	}
 
 	@Override
-	public void run() {	//this is the threaded method that constantly checks and reads the socket.
+	public void run() { // this is the threaded method that constantly checks
+						// and reads the socket.
 		keep_running = true;
 		while (keep_running) {
 			if (!is_connected()) {
@@ -210,7 +228,7 @@ public class SocketVision extends Thread {
 		distanceHeight = 0;
 		return tmp;
 	}
-	
+
 	public synchronized double get_distance_width() {
 		double tmp = distanceWidth;
 		distanceWidth = 0;
