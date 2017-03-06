@@ -34,19 +34,40 @@ public class FlyWheelSystem extends Subsystem {
 			{
 		//in, rpm, Fgain, P,   I,   D
 		//0 distance, first coordinate point
-		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-		{},	//second coordinate point
-		{},	//third
-		{},	//fourth
-		{},	//fifth
-		{},	//sixth
-		{},	//seventh
-		{},	//eighth
-		{},	//ninth
-		{},	//tenth
-		{}
-			};
+		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, // 0 ft
+		{104.73, -1950, 1.8, 6.4, 0.0, 300.0},	//second coordinate point 8 ft
+		{106.04, -2025, 1.8, 6.0, 0.0, 200.0},	//third					  9 ft
+		{121.82, -2075, 1.8, 6.0, 0.0, 200.0},	//fourth				  10 ft
+		{133.53, -2100, 1.8, 6.3, 0.0, 200.0},	//fifth					  11 ft
+		{146.94, -2235, 1.8, 6.4, 0.0, 225.0},	//sixth					  12 ft
+		{157.82, -2250, 1.8, 6.0, 0.0, 200.0},	//seventh				  13 ft	
+		{170.06, -2287, 1.8, 5.0, 0.0, 150.0},	//eighth				  14 ft
+		{183.95, -2325, 1.8, 5.0, 0.0, 150.0},	//ninth					  15 ft
+		{207.01, -2380, 1.8, 5.0, 0.0, 150.0},	//tenth					  16 ft
+		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}	//Overflow point for slop	  17 ft
+		};
+		//2700 speed; f = 1.8, p = 3.2
 
+/*BACKUP COPY BELOW:
+//		//lookup everything: inches, (to) speed, f, p, i, and d
+//	private static final double [][] kLookupFlywheelSettings = new double [][]
+//			{
+//		//in, rpm, Fgain, P,   I,   D
+//		//0 distance, first coordinate point
+//		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, // 0 ft
+//		{104.73, -1950, 1.8, 6.4, 0.0, 0.0},	//second coordinate point 8 ft
+//		{106.04, -2025, 1.8, 6.9, 0.0, 0.0},	//third					  9 ft
+//		{121.82, -2075, 1.8, 6.5, 0.0, 0.0},	//fourth				  10 ft
+//		{133.53, -2100, 1.8, 6.4, 0.0, 0.0},	//fifth					  11 ft
+//		{146.94, -2235, 1.8, 6.4, 0.0, 0.0},	//sixth					  12 ft
+//		{157.82, -2250, 1.8, 6.4, 0.0, 0.0},	//seventh				  13 ft	
+//		{170.06, -2287, 1.8, 6.0, 0.0, 0.0},	//eighth				  14 ft
+//		{183.95, -2325, 1.8, 5.8, 0.0, 0.0},	//ninth					  15 ft
+//		{207.01, -2380, 1.8, 5.4, 0.0, 0.0},	//tenth					  16 ft
+//		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}	//Overflow point for slop	  17 ft
+//		};
+//		//2700 speed; f = 1.8, p = 3.2
+*/
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
 
@@ -62,7 +83,7 @@ public class FlyWheelSystem extends Subsystem {
 	private double speed_ = -1500;
 
 	public boolean vbus_mode = false;
-	private boolean running_ = false;
+	private boolean running_ = true;
 	private final static boolean tuning_ = true;
 	private boolean using_vision = false;
 	private final static boolean isWheelInverted = false;
@@ -73,7 +94,7 @@ public class FlyWheelSystem extends Subsystem {
 	 * and from CIMCoder (am-3314) page: 
 	 * "2 channel quadrature output with 20 pulses per channel per revolution for sensing speed and direction."
 	 * */
-	private static final int kEncoderPerRev_ = 80; // not 20
+	private static final int kEncoderPerRev_ = 20; // not 80 or 40
 	// Pulses Per Revolution:
 	// 20/channel
 	// the native units are calculated by (for quadrature encoders) 4*(codes per
@@ -88,9 +109,9 @@ public class FlyWheelSystem extends Subsystem {
 	// calculate f gain (feed-forward) so 100% motor output is 5000 rpm
 	// (setpoint in code)
 	// f = 100% * (full forward output) / (native units per 100 ms)
-	// f = 100% * 1023 / ((5000 / 60 / 10) * 80) IS TECHNICALLY INDEPENDENT FROM
+	// f = 100% * 1023 / ((5000 / 60 / 10) * 80) IS MAYBE INDEPENDENT FROM
 	// SYSTEM
-	private static final double kFGain = 0.0; // feed-forward gain, was 1.5345
+	private static final double kFGain = 0; // feed-forward gain, was 1.5345
 
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
@@ -195,11 +216,12 @@ public class FlyWheelSystem extends Subsystem {
 		double vbus = getAdjustedVbus();
 		flyWheelMotor.set(vbus);
 		if (Robot.show_debug_flywheel) {
-			System.out.println("Adjusted vbus: " + vbus);
-			System.out.println("Encoder Out: " + flyWheelMotor.getSpeed());
-			System.out.println("Closed Loop Error: " + flyWheelMotor.getClosedLoopError());
-			System.out.println(
-					"Motor Output Voltage: " + flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
+
+			SmartDashboard.putNumber("Adjusted vbus: ", vbus);
+			SmartDashboard.putNumber("Encoder Out: " , flyWheelMotor.getSpeed());
+			SmartDashboard.putNumber("Closed Loop Error: " , flyWheelMotor.getClosedLoopError());
+			SmartDashboard.putNumber(
+					"Motor Output Voltage: " , flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
 
 		}
 	}
@@ -232,78 +254,72 @@ public class FlyWheelSystem extends Subsystem {
 
 		if(using_vision){
 			//TODO: replace with fancy PID setting version
-			double inches = Robot.visionBoiler_.get_distance_width();
+			double inches = Robot.visionBoiler_.get_distance_height();
 			speed_ = maintainFlywheelSpeed(inches);
-			//speed_ = runFancyPIDMaintenance(inches);
+			//speed_ = runFancyPIDMaintenance(inches)
 		}
 
 		flyWheelMotor.set(speed_);
 		
 		if (Robot.show_debug_flywheel) {
-			System.out.println("Given Speed: " + speed_);
-			System.out.println("Encoder Out: " + flyWheelMotor.getSpeed());
-			System.out.println("Closed Loop Error: " + flyWheelMotor.getClosedLoopError());
-			System.out.println(
-					"Motor Output Voltage: " + flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
+			SmartDashboard.putNumber("Given Speed: " , speed_);
+			SmartDashboard.putNumber("Encoder Out: " , flyWheelMotor.getSpeed());
+			SmartDashboard.putNumber("Closed Loop Error: " , flyWheelMotor.getClosedLoopError());
+			SmartDashboard.putNumber(
+					"Motor Output Voltage: " , flyWheelMotor.getOutputVoltage() / flyWheelMotor.getBusVoltage());
 			SmartDashboard.putNumber("Maximum Out Error",
-					Double.max(flyWheelMotor.getError(), SmartDashboard.getNumber("Maximum Out Error", 0.0)));
+					Double.min(flyWheelMotor.getError(), SmartDashboard.getNumber("Maximum Out Error", 0.0)));
 			//SmartDashboard.putNumber("Vision-based distance: ", Robot.visionBoiler_.get_distance_height());
 		}
 		
 		if (tuning_) {
-			counting_for_tuning_opportunities_++;
-			if( counting_for_tuning_opportunities_ > 1000 ) {
 			double fg = SmartDashboard.getNumber("F Gain ", 0.0);
 			double pg = SmartDashboard.getNumber("P Gain ", 0.0);
 			double ig = SmartDashboard.getNumber("I Gain ", 0.0);
 			double dg = SmartDashboard.getNumber("D Gain ", 0.0);
 
 			Robot.flyWheelSystem.configPID(0, fg, pg, ig, dg);
-			
-			counting_for_tuning_opportunities_ = 0;
-			}
 		}
-
 	}
 
 	public void speedUp() {
 		speed_ += kSpeedIncrement;
-		if (speed_ > kSpeedMax)
+		if (speed_ < kSpeedMax)
 			speed_ = kSpeedMax;
-
-		if (Robot.show_debug_flywheel) {
-			System.out.println("speed: " + speed_);
-		}
+//
+//		if (Robot.show_debug_flywheel) {
+//			System.out.println("speed: " + speed_);
+//		}
 	}
 
 	public void speedDown() {
 		speed_ -= kSpeedIncrement;
-		if (speed_ < kSpeedMin)
+		if (speed_ > kSpeedMin)
 			speed_ = kSpeedMin;
-
-		if (Robot.show_debug_flywheel) {
-			System.out.println("speed: " + speed_);
-		}
+//
+//		if (Robot.show_debug_flywheel) {
+//			System.out.println("speed: " + speed_);
+//		}
 	}
 
 	public void vbusDown() {
 		vbus_ -= kVbusIncrement;
-		if (vbus_ < kVbusMin)
+		if (vbus_ > kVbusMin)
 			vbus_ = kVbusMin;
 
-		if (Robot.show_debug_flywheel) {
-			System.out.println("vbus: " + vbus_);
-		}
+//		if (Robot.show_debug_flywheel) {
+//			System.out.println("vbus: " + vbus_);
+//		}
 	}
 
 	public void vbusUp() {
 		vbus_ += kVbusIncrement;
-		if (vbus_ > kVbusMax)
+		if (vbus_ < kVbusMax)
 			vbus_ = kVbusMax;
 
-		if (Robot.show_debug_flywheel) {
-			System.out.println("vbus: " + vbus_);
-		}
+//		if (Robot.show_debug_flywheel) {
+//			System.out.println("vbus: " + vbus_);
+//		}
 	}
 
 	private double getAdjustedVbus() {
