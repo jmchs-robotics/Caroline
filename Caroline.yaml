@@ -301,6 +301,62 @@ Children:
         value: []
     Base: Subsystem
     Name: PowerSystem
+  - Children:
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id004
+          default: '0'
+          name: Input Channel (Digital)
+          validators: *id005
+          value: '4'
+      Base: Limit Switch
+      Name: DIP1
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id004
+          default: '0'
+          name: Input Channel (Digital)
+          validators: *id005
+          value: '5'
+      Base: Limit Switch
+      Name: DIP2
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id004
+          default: '0'
+          name: Input Channel (Digital)
+          validators: *id005
+          value: '6'
+      Base: Limit Switch
+      Name: DIP3
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id004
+          default: '0'
+          name: Input Channel (Digital)
+          validators: *id005
+          value: '7'
+      Base: Limit Switch
+      Name: DIP4
+    Properties:
+      Default command parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Default command parameters
+        validators: null
+        value: []
+      Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Default Command, type: Command, validators: null, value: None}
+      Constants: !!robotbuilder.data.properties.ConstantsProperty
+        default: []
+        name: Constants
+        validators: null
+        value: []
+    Base: Subsystem
+    Name: RoboRioSystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
