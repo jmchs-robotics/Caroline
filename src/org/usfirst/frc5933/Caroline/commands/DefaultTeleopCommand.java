@@ -43,13 +43,11 @@ public class DefaultTeleopCommand extends Command {
 	}
 
 	// Called repeatedly when this Command is scheduled to run
-	protected void execute() { //do we want to cut this based off of is_shifting?
-		if (Robot.is_sonny) {
-			Robot.driveTrainSystem.arcadeDrive(Robot.oi.driverJoystick.getY(), -Robot.oi.driverJoystick.getX());
-		} else {
-			Robot.driveTrainSystem.arcadeDrive(Robot.oi.driverJoystick);
-		}
-		distinguishPOV(Robot.oi.driverJoystick.getPOV(), Robot.oi.subsystemJoystick.getPOV()); //Shudder conga!!
+	protected void execute() { // do we want to cut this based off of
+								// is_shifting?
+		Robot.driveTrainSystem.arcadeDrive(Robot.oi.driverJoystick);
+		distinguishPOV(Robot.oi.driverJoystick.getPOV(), Robot.oi.subsystemJoystick.getPOV()); // Shudder
+																								// conga!!
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
@@ -67,51 +65,62 @@ public class DefaultTeleopCommand extends Command {
 		end();
 	}
 
-	public void distinguishPOV(int POV, int POV2) { //step one in the shudder chain
-		if(tapped2){	//Stay away from a constant movement
-			if(POV2 == -1){
-				tapped2 = false; //allow the next shudder to happen
-				//Robot.driveTrainSystem.stop();
+	public void distinguishPOV(int POV, int POV2) { // step one in the shudder
+													// chain
+		if (tapped2) { // Stay away from a constant movement
+			if (POV2 == -1) {
+				tapped2 = false; // allow the next shudder to happen
+				// Robot.driveTrainSystem.stop();
 			}
-		}else{
-			tapped2 = true; //Stop the shudder chain next time around
-			if(POV2 == 0){ //up
+		} else {
+			tapped2 = true; // Stop the shudder chain next time around
+
+			if (POV2 == 0) { // up
 				Robot.driveTrainSystem.incrementShudder();
 			}
-			if(POV2 == 90){ //right
+
+			if (POV2 == 90) { // right
 				Robot.driveTrainSystem.shudder_right();
 			}
-			if(POV2 == 180){ //down
+
+			if (POV2 == 180) { // down
 				Robot.driveTrainSystem.decrementShudder();
 			}
-			if(POV2 == 270){ //left
+
+			if (POV2 == 270) { // left
 				Robot.driveTrainSystem.shudder_left();
 			}
-			if(POV2 == -1){ //not pressed
+
+			if (POV2 == -1) { // not pressed
 				tapped2 = false;
 			}
 		}
 
-		if(tapped){	//Stay away from a constant movement
-			if(POV == -1){
-				tapped = false; //allow the next shudder to happen
+		if (tapped) { // Stay away from a constant movement
+			if (POV == -1) {
+				tapped = false; // allow the next shudder to happen
 				Robot.driveTrainSystem.stop();
 			}
-		}else{
-			tapped = true; //Stop the shudder chain next time around
-			if(POV == 0){ //up
+		} else {
+			tapped = true; // Stop the shudder chain next time around
+
+			if (POV == 0) { // up
 				Robot.driveTrainSystem.incrementShudder();
 			}
-			if(POV == 90){ //right
+
+			if (POV == 90) { // right
 				Robot.driveTrainSystem.shudder_right();
 			}
-			if(POV == 180){ //down
+
+			if (POV == 180) { // down
 				Robot.driveTrainSystem.decrementShudder();
 			}
-			if(POV == 270){ //left
+
+			if (POV == 270) { // left
 				Robot.driveTrainSystem.shudder_left();
 			}
-			if(POV == -1){ //not pressed
+
+			if (POV == -1) { // not pressed
 				tapped = false;
 			}
 		}
