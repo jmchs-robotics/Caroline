@@ -7,6 +7,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SocketVision extends Thread {
 	public static final String NADA = "nada";
 	public static final String RIGHT = "right";
@@ -22,7 +24,9 @@ public class SocketVision extends Thread {
 	private double degrees_x = 0;
 	private double degrees_y = 0;
 	private double degrees_width = 0;
-	private double distance = 0;
+
+	private double distanceHeight = 0;
+	private double distanceWidth = 0;
 
 	public SocketVision(String ip, int port) {
 		ip_ = ip;
@@ -56,12 +60,23 @@ public class SocketVision extends Thread {
 			packet.setLength(data_.length);
 			socket_.receive(packet);
 			if (packet.getData().length > 0) {
-				// TODO: Parse the data and set the direction and degrees
+
+				/*
+				 * Once the packet has been received and proven to have some
+				 * data in it, the parsing begins. First, get the 'stuff' from
+				 * the packet. Then start standardization and splitting.
+				 * Finally, use the indices of appropriate data (as shown in the
+				 * example) to share the new info with the rest of the robot.
+				 * Since these are both threaded, synchronization is an issue,
+				 * but is handled nicely later on.
+				 */
 
 				String stuffInThePacket = new String(packet.getData(), 0, packet.getLength());
 
-				// String contains: x position, y, width, distance, L/C/R
-				// e.g. "-100.14,20.33,15.75,172.56,L "
+				// String contains:: Identifier: x position, y, width, distance,
+				// L/C/R
+				// e.g. "Peg found at: -100.14,20.33,15.75,172.56,L "
+
 				stuffInThePacket = stuffInThePacket.toLowerCase(); // standardize
 																	// everything.
 																	// Just in
@@ -71,19 +86,41 @@ public class SocketVision extends Thread {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
 
-				// now is "-100.14,20.33,15.75,172.56,l "
-				String[] packetParsing = stuffInThePacket.split(","); // now is:
-																		// {"-100.14","20.33","15.75","172.56","l
+				if (!stuffInThePacket.contains(":")) // make sure that this is a
+														// string you want by
+														// testing for an unique
+														// character
+					return false;
+
+				String[] noIdentifier = stuffInThePacket.split(":"); // take out
+																		// the
+																		// identifying
+																		// string
+																		// to
+																		// make
+																		// the
+																		// rest
+																		// of
+																		// processing
+																		// easier
+
+				// now is {"peg found at"," -100.14,20.33,15.75,172.56,l "}
+				String[] packetParsing = noIdentifier[1].split(","); // now is:
+																		// {"
+																		// -100.14","20.33","15.75","172.56","l
 																		// "}
 
 				int count = 0; // keep track of the index in the for loop below
 				for (String x : packetParsing) {
-					packetParsing[count] = x.trim(); // take the spaces out.
-														// just in case.
+
+					packetParsing[count] = x.trim(); // take the spaces out,
+														// just in case there
+														// needs to be other
+														// recognition later
 					count++; // increment the index
 				}
 				// now is: {"-100.14","20.33","15.75","172.56","l"} Look at the
-				// last index for the difference
+				// last and first indices (pl. index) for the difference
 
 				double ldegrees_x = Double.parseDouble(packetParsing[0]); // following
 																			// example,
@@ -93,17 +130,22 @@ public class SocketVision extends Thread {
 																			// 20.33
 				double ldegrees_width = Double.parseDouble(packetParsing[2]); // is
 																				// 15.75
-				double ldistance = Double.parseDouble(packetParsing[3]); // is
+				double ldistanceW = Double.parseDouble(packetParsing[3]); // is
 																			// 172.56
-
+				double ldistanceH = Double.parseDouble(
+						packetParsing[4]); /*
+											 * ADDED 2/21/17 due to small change
+											 * in UpBoard code. Example is still
+											 * valid otherwise.
+											 */
 				String ldirection_;
-				if (packetParsing[4].equalsIgnoreCase("l")) {
+				if (packetParsing[5].equalsIgnoreCase("l")) {
 					ldirection_ = LEFT;
 
-				} else if (packetParsing[4].equalsIgnoreCase("r")) {
+				} else if (packetParsing[5].equalsIgnoreCase("r")) {
 					ldirection_ = RIGHT;
 
-				} else if (packetParsing[4].equalsIgnoreCase("c")) {
+				} else if (packetParsing[5].equalsIgnoreCase("c")) {
 					ldirection_ = NADA;
 
 				} else {
@@ -117,11 +159,15 @@ public class SocketVision extends Thread {
 					degrees_x = ldegrees_x;
 					degrees_y = ldegrees_y;
 					degrees_width = ldegrees_width;
-					distance = ldistance;
+					distanceWidth = ldistanceW;
+					distanceHeight = ldistanceH;
 					direction_ = ldirection_;
 				}
+
 				if (Robot.show_debug_vision) {
 					System.out.println("Done got that data! " + stuffInThePacket);
+					SmartDashboard.putString("Port " + port_ + " output: ", stuffInThePacket);
+
 				}
 				return true;
 			}
@@ -135,7 +181,8 @@ public class SocketVision extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public void run() { // this is the threaded method that constantly checks
+						// and reads the socket.
 		keep_running = true;
 		while (keep_running) {
 			if (!is_connected()) {
@@ -147,6 +194,9 @@ public class SocketVision extends Thread {
 
 	public void stoprunning() {
 		keep_running = false;
+
+		socket_.disconnect();
+		socket_.close();
 	}
 
 	// the below methods are the easiest way to access the data that was grabbed
@@ -179,9 +229,15 @@ public class SocketVision extends Thread {
 		return tmp;
 	}
 
-	public synchronized double get_distance() {
-		double tmp = distance;
-		distance = 0;
+	public synchronized double get_distance_height() {
+		double tmp = distanceHeight;
+		distanceHeight = 0;
+		return tmp;
+	}
+
+	public synchronized double get_distance_width() {
+		double tmp = distanceWidth;
+		distanceWidth = 0;
 		return tmp;
 	}
 }
