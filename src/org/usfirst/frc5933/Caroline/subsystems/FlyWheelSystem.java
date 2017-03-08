@@ -234,7 +234,7 @@ public class FlyWheelSystem extends Subsystem {
 
 		if (using_vision) {
 			// TODO: replace with fancy PID setting version
-			double inches = Robot.visionBoiler_.get_distance_height();
+			double inches = Robot.get_boiler_distance_height();
 			speed_ = maintainFlywheelSpeed(inches);
 			// speed_ = runFancyPIDMaintenance(inches)
 		}

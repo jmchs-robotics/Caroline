@@ -19,9 +19,10 @@ import org.usfirst.frc5933.Caroline.SocketVision;
  */
 public class AlignToBoiler extends Command {
 	private static boolean finished = false;
-	private static final double kDegreesToVBus = 42; // because only the center
-														// 1/3 is used on the
-														// pic
+	
+	// because only the center 1/3 is used on the pic
+	private static final double kDegreesToVBus = 42;
+	
 	private static final double kMaxShudder = 0.5;
 	private static final double kMinimumShudder = 0.1;
 
@@ -44,36 +45,21 @@ public class AlignToBoiler extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		if (Robot.visionBoiler_ != null) {
-			if (!Robot.visionBoiler_.is_connected()) {
-				if (!Robot.visionBoiler_.connect()) {
-					if (Robot.show_debug_vision) {
-						System.err.println("Failed to connect to the Helmsman and I really need my mayonnaise");
-					}
-					finished = true;
-				} else {
-					if (Robot.show_debug_vision) {
-						System.out.println("Connected. No mayo for me.");
-					}
-					finished = false;
-				}
-			}
-		}
+		finished = false;
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		String dir = Robot.visionBoiler_.get_direction();
-		double x_dist = Math.abs(Robot.visionBoiler_.get_degrees_x());
-		double vBusProportion = x_dist / kDegreesToVBus; // Try to keep output
-															// under 0.5, even
-															// that may be too
-															// high.
+		String dir = Robot.get_boiler_direction();
+		double x_dist = Math.abs(Robot.get_boiler_degress_x());
+		
+		// Try to keep output under 0.5, even that may be too high.
+		double vBusProportion = x_dist / kDegreesToVBus;
 
-		if (vBusProportion > kMaxShudder) { // forces number between max shudder
-											// (0.5)
+		// forces number between max shudder (0.5) and min shudder (0.2)
+		if (vBusProportion > kMaxShudder) { 
 			vBusProportion = kMaxShudder;
-		} else if (vBusProportion < kMinimumShudder) { // and min shudder (0.2)
+		} else if (vBusProportion < kMinimumShudder) {
 			vBusProportion = kMinimumShudder;
 		}
 

@@ -47,7 +47,8 @@ public class DriveStraight extends Command {
 		if (usePresets_) {
 
 			if (!Robot.driveTrainSystem.setStraightMotionMagic(feetPreset_, config_)) {
-				end(); // if you aren't using a valid config, get out of here!
+				 // if you aren't using a valid config, get out of here!
+				end();
 			}
 
 		} else {

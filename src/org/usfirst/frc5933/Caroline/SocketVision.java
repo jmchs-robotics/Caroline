@@ -55,9 +55,7 @@ public class SocketVision extends Thread {
 	}
 
 	public boolean recv() {
-		DatagramPacket packet = new DatagramPacket(data_, data_.length);// ,
-																		// addr_,
-																		// port_);
+		DatagramPacket packet = new DatagramPacket(data_, data_.length);
 		try {
 			packet.setLength(data_.length);
 			socket_.receive(packet);
@@ -79,67 +77,55 @@ public class SocketVision extends Thread {
 				// L/C/R
 				// e.g. "Peg found at: -100.14,20.33,15.75,172.56,L "
 
-				stuffInThePacket = stuffInThePacket.toLowerCase(); // standardize
-																	// everything.
-																	// Just in
-																	// case.
+				// standardize everything. Just in case.
+				stuffInThePacket = stuffInThePacket.toLowerCase();
 
 				if (Robot.show_debug_vision) {
 					System.out.println("Stuff in the packet is: " + stuffInThePacket);
 				}
 
-				if (!stuffInThePacket.contains(":")) // make sure that this is a
-														// string you want by
-														// testing for an unique
-														// character
+				// make sure that this is a string you want by testing for an
+				// unique character
+				if (!stuffInThePacket.contains(":"))
 					return false;
 
-				String[] noIdentifier = stuffInThePacket.split(":"); // take out
-																		// the
-																		// identifying
-																		// string
-																		// to
-																		// make
-																		// the
-																		// rest
-																		// of
-																		// processing
-																		// easier
+				// take out the identifying string to make the rest of
+				// processing easier
+
+				String[] noIdentifier = stuffInThePacket.split(":");
 
 				// now is {"peg found at"," -100.14,20.33,15.75,172.56,l "}
-				String[] packetParsing = noIdentifier[1].split(","); // now is:
-																		// {"
-																		// -100.14","20.33","15.75","172.56","l
-																		// "}
+
+				// now is: {"-100.14","20.33","15.75","172.56","l"}
+				String[] packetParsing = noIdentifier[1].split(",");
 
 				int count = 0; // keep track of the index in the for loop below
 				for (String x : packetParsing) {
-
-					packetParsing[count] = x.trim(); // take the spaces out,
-														// just in case there
-														// needs to be other
-														// recognition later
-					count++; // increment the index
+					// take the spaces out, just in case there needs to be other
+					// recognition later
+					packetParsing[count] = x.trim();
+					++count;
 				}
 				// now is: {"-100.14","20.33","15.75","172.56","l"} Look at the
 				// last and first indices (pl. index) for the difference
 
-				double ldegrees_x = Double.parseDouble(packetParsing[0]); // following
-																			// example,
-																			// is
-																			// -100.14
-				double ldegrees_y = Double.parseDouble(packetParsing[1]); // is
-																			// 20.33
-				double ldegrees_width = Double.parseDouble(packetParsing[2]); // is
-																				// 15.75
-				double ldistanceW = Double.parseDouble(packetParsing[3]); // is
-																			// 172.56
-				double ldistanceH = Double.parseDouble(
-						packetParsing[4]); /*
-											 * ADDED 2/21/17 due to small change
-											 * in UpBoard code. Example is still
-											 * valid otherwise.
-											 */
+				// following example, is-100.14
+				double ldegrees_x = Double.parseDouble(packetParsing[0]);
+
+				// is 20.33
+				double ldegrees_y = Double.parseDouble(packetParsing[1]);
+
+				// is 15.75
+				double ldegrees_width = Double.parseDouble(packetParsing[2]);
+
+				// is 172.56
+				double ldistanceW = Double.parseDouble(packetParsing[3]);
+
+				/*
+				 * ADDED 2/21/17 due to small change in UpBoard code. Example is
+				 * still valid otherwise.
+				 */
+				double ldistanceH = Double.parseDouble(packetParsing[4]);
 				String ldirection_;
 				if (packetParsing[5].equalsIgnoreCase("l")) {
 					ldirection_ = LEFT;
@@ -183,8 +169,9 @@ public class SocketVision extends Thread {
 	}
 
 	@Override
-	public void run() { // this is the threaded method that constantly checks
-						// and reads the socket.
+	public void run() {
+		// this is the threaded method that constantly checks
+		// and reads the socket.
 		keep_running = true;
 		while (keep_running) {
 			if (!is_connected()) {

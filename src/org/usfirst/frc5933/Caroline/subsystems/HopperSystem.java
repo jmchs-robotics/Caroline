@@ -78,17 +78,18 @@ public class HopperSystem extends Subsystem {
 
 	public void teleopPeriodic() {
 		if (running_) {
-			if (useAccel) { // driver preference whether they want this
-							// assistance or not.
-				if (accelerometerOver(kImpactThreshold)) { // if combined
-															// acceleration
-															// vector tops
-															// threshold,
-					agitiatorMotor.set(0); // stop shooting (agitation)
-											// immediately,
-					running_ = !running_; // toggle running,
-					return; // and get out of here, you don't need to finish
-							// this method.
+			if (useAccel) { 
+				// driver preference whether they want this assistance or not.
+				// if combined acceleration vector tops threshold,
+				if (accelerometerOver(kImpactThreshold)) { 
+					
+					// stop shooting (agitation) immediately,
+					agitiatorMotor.set(0); 
+
+					running_ = !running_; 
+					// toggle running, and get out of here, 
+					// you don't need to finish this method.
+					return;
 				}
 			}
 			customReversing();
@@ -119,17 +120,18 @@ public class HopperSystem extends Subsystem {
 
 	public void autonomousPeriodic() {
 		if (running_) {
-			if (useAccel) { // driver preference whether they want this
-							// assistance or not.
-				if (accelerometerOver(kImpactThreshold)) { // if either left or
-															// right
-															// acceleration tops
-															// 0.5,
-					agitiatorMotor.set(0); // stop shooting (agitation)
-											// immediately
-					running_ = !running_; // toggle running
-					return; // get out of here, you don't need to finish this
-							// method.
+			if (useAccel) { 
+				// driver preference whether they want this assistance or not.
+				
+				// if either left or right acceleration tops 0.5,
+				// stop shooting (agitation) immediately 
+				if (accelerometerOver(kImpactThreshold)) { 
+					agitiatorMotor.set(0);
+											
+					// toggle running
+					// get out of here, you don't need to finish this method.
+					running_ = !running_; 
+					return;
 				}
 			}
 			agitiatorMotor.set(agitatorSpeed_);
@@ -167,23 +169,20 @@ public class HopperSystem extends Subsystem {
 	 * either true if over threshold, or false if not over.
 	 */
 	private boolean accelerometerOver(double threshold) {
-		double x = Math.abs(accel.getX()); // this is horizontal, maybe
-											// accommodate for noise?
-		double y = Math.abs(accel.getY()); // this is horizontal, maybe
-											// accommodate for noise?
-		double z = Math.abs(accel.getZ()) - 1; // this is down, so accommodate
-												// for 1 g of force (remember,
-												// RIO is upside down
-		double totalMagnitude = Math.sqrt(x * x + y * y + z * z); // combine the
-																	// three
-																	// into one
-																	// vector.
-																	// If you
-																	// EVER get
-																	// over
-																	// 'gs', cut
-																	// the
-																	// hopper
+
+		// this is horizontal, maybe accommodate for noise?
+		double x = Math.abs(accel.getX());
+
+		// this is horizontal, maybe accommodate for noise?
+		double y = Math.abs(accel.getY());
+		
+		// this is down, so accommodate for 1 g of force 
+		// (remember, RIO is upside down)
+		double z = Math.abs(accel.getZ()) - 1;
+		
+		// combine the three into one vector.
+		// If you EVER get over 'gs', cut the hopper
+		double totalMagnitude = Math.sqrt(x * x + y * y + z * z);
 		SmartDashboard.putNumber("Accelerometer Magnitude ", totalMagnitude);
 		if (totalMagnitude > threshold)
 			return true;

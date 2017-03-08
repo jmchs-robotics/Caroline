@@ -40,69 +40,37 @@ public class DriveTrainSystem extends Subsystem {
 	private final static boolean leftSideInverted = false;
 	private final static boolean rightSideInverted = false;
 
-	public final static double kLowGearMin = 0.6; // These are tested values.
-	// the set() uses a 0.0 -
-	// 1.0 range
-	public final static double kLowGearMax = 0.525; // these are intermediate
-	// guestimated values. is
-	// more like maxLooseness
+	// These are tested values. the set() uses a 0.0 - 1.0 range
+	public final static double kLowGearMin = 0.6;
 
-	public final static double kHighGearMin = 0.05; // believe me, these values
-	// work
-	public final static double kHighGearMax = 0.085; // DON'T CHANGE
+	// these are intermediate guestimated values. is more like maxLooseness
+	public final static double kLowGearMax = 0.525;
 
-	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1; // the
-																						// slave
-																						// and
-																						// master
-																						// motors
-																						// have
-	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2; // a
-																						// new
-																						// terminology:
-																						// X
-																						// follow
-																						// Y
-																						// by
-																						// Z
-	// this means that X motors are in follower
-	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1; // mode,
-																							// following
-																							// Y
-																							// motors
-																							// who
-																							// act
-																							// as
-																							// 'master'
-	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2; // motors,
-																							// by
-																							// Z
-																							// 'modules'.
-																							// For
-																							// example,
-																							// Rosie's
-	// drivetrain ran as a 1 follow 1 by 2 setup,
-	private final static double kMaximumMagnitudePercentVBusShudder = 0.90; // with
-																			// both
-																			// the
-																			// left
-																			// and
-																			// right
-																			// sides
-																			// (the
-																			// two
-	private final static double kMinimumMagnitudePercentVBusShudder = 0.20; // 'modules')
-																			// consisting
-																			// of
-																			// 1
-																			// 'master'
-																			// motor
-																			// and
+	// believe me, these values work
+	public final static double kHighGearMin = 0.05;
+
+	// DON'T CHANGE (Upon penalty of death)
+	public final static double kHighGearMax = 0.085;
+
+	// the slave and master motors have a new terminology:
+	// X follow Y by Z
+	// this means that X motors are in follower mode, following
+	// Y motors who act as 'master' motors, by Z 'modules'.
+	// For example, Rosie's drivetrain ran as a 1 follow 1 by 2 setup
+	// with both the left and right sides (the two 'modules')
+	// consisting of 1 'master' motor and
 	// 1 follower motor, hence the 1f1x2 setup (abbreviated)
-	private final static double kVBusShudderIncrement = 0.1; // the incrementing
-	// step.
-	// generally 0.1
 
+	private final CANTalon leftSlave1Motor = RobotMap.driveTrainSystemLeftSlaveMotor1;
+	private final CANTalon leftSlave2Motor = RobotMap.driveTrainSystemLeftSlaveMotor2;
+	private final CANTalon rightSlave1Motor = RobotMap.driveTrainSystemRightSlaveMotor1;
+	private final CANTalon rightSlave2Motor = RobotMap.driveTrainSystemRightSlaveMotor2;
+
+	private final static double kMaximumMagnitudePercentVBusShudder = 0.90;
+	private final static double kMinimumMagnitudePercentVBusShudder = 0.20;
+
+	// the incrementing step. generally 0.1
+	private final static double kVBusShudderIncrement = 0.1;
 	private double shudderMagnitude = 0.5;
 
 	/*
@@ -110,9 +78,8 @@ public class DriveTrainSystem extends Subsystem {
 	 * https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/
 	 * JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java
 	 */
-	private static final int kEncoderPerRev_ = 360; // use codes per revolution
-													// unless otherwise
-													// specified
+	// use codes per revolution unless otherwise specified
+	private static final int kEncoderPerRev_ = 360;
 	// Pulses Per Revolution: 1440
 	// Cycles per revolution: 360
 	// the native units are calculated by (for quadrature encoders) 4*(codes per
@@ -142,21 +109,29 @@ public class DriveTrainSystem extends Subsystem {
 	// f = 100% * (full forward output) / (native units per 100 ms)
 	// f = 100% * 3000 / ((3000 * 360 / 60 / 10) * 1440) IS TECHNICALLY
 	// INDEPENDENT FROM SYSTEM
-	private static final double kFGain = 0.001157407; // feed-forward gain
+
+	// feed-forward gain
+	private static final double kFGain = 0.001157407;
 
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
 	// double until motor oscillates (too much p) or is adequate for system.
 	// ONLY TEST WITH SYSTEM DRAG ON MOTOR
-	private static final double kPGain = 0.0; // p gain
+
+	// p gain
+	private static final double kPGain = 0.0;
 
 	// smoothes motion from error to setpoint.
 	// Start with 10 * pgain
-	private static final double kDGain = 0.0; // d gain
+
+	// d gain
+	private static final double kDGain = 0.0;
 
 	// If dgain doesn't quite get to setpoint, add igain
 	// start with 1/100 * pgain
-	private static final double kIGain = 0.0; // i gain
+
+	// i gain
+	private static final double kIGain = 0.0;
 
 	public DriveTrainSystem() {
 		super();
@@ -216,7 +191,9 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	private void configMotionMagicStraight(DriveTrainConfigurations config) {
-		configFollower(config); // Totally "not" arbitrary choice
+		// Totally "not" arbitrary choice
+		configFollower(config);
+
 		// TODO: config a 2 follow 1 by 2 with flexible error ceilings (new
 		// method?)
 
@@ -254,23 +231,13 @@ public class DriveTrainSystem extends Subsystem {
 		}
 	}
 
-	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config) { // this
-																								// method
-																								// can
-																								// be
-																								// called
-																								// by
-																								// a
-																								// command
-																								// in
-																								// its
-																								// 'INIT'
-																								// phase,
-		configMotionMagicStraight(config); // and it will run the delivered
-											// rotations. The finish() method
-											// can have a boolean statement
-											// checking whether this has
-		switch (config) { // actually reached the set rotations.
+	// this method can be called by a command in its 'INIT' phase,
+	// and it will run the delivered rotations. The finish() method
+	// can have a boolean statement checking whether this has
+	// actually reached the set rotations.
+	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config) {
+		configMotionMagicStraight(config);
+		switch (config) {
 		case Auto_5F1_LeftLead:
 			leftMasterMotor.set(rotations);
 			break;
@@ -291,18 +258,16 @@ public class DriveTrainSystem extends Subsystem {
 		case Auto_5F1_LeftLead:
 			leftMasterMotor.set(rotations);
 
-			if (leftMasterMotor.getClosedLoopError() == 0) { // *in whiny voice*
-																// are we there
-																// yet?
+			// *in whiny voice* are we there yet? love this comment :)
+			if (leftMasterMotor.getClosedLoopError() == 0) {
 				return true;
 			}
 			break;
 		case Auto_5F1_RightLead:
 			rightMasterMotor.set(rotations);
 
-			if (rightMasterMotor.getClosedLoopError() == 0) { // *in whiny
-																// voice* are we
-																// there yet?
+			// *in whiny voice* are we there yet?
+			if (rightMasterMotor.getClosedLoopError() == 0) {
 				return true;
 			}
 			break;
@@ -310,20 +275,17 @@ public class DriveTrainSystem extends Subsystem {
 			leftMasterMotor.set(rotations);
 			rightMasterMotor.set(rotations);
 
-			if (leftMasterMotor.getClosedLoopError() == 0 && rightMasterMotor.getClosedLoopError() == 0) { // *in
-																											// whiny
-																											// voice*
-																											// are
-																											// we
-																											// there
-																											// yet?
+			// *in whiny voice* are we there yet?
+			if (leftMasterMotor.getClosedLoopError() == 0 && rightMasterMotor.getClosedLoopError() == 0) {
 				return true;
 			}
 		default:
-			return true; // when this method is 'finished' running return true.
-							// So, if the config is bad, get out of here.
+			// when this method is 'finished' running return true.
+			// So, if the config is bad, get out of here.
+			return true;
 		}
-		return false; // you obviously ain't there yet.
+		// you obviously ain't there yet.
+		return false;
 	}
 
 	private void configLeftPID(int profileNumber, double f, double p, double i, double d) {
@@ -355,8 +317,12 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void set(double left, double right) {
-		leftMasterMotor.set(-left); // accommodate for the trippy drive train.
-		rightMasterMotor.set(right);// none needed here.
+
+		// accommodate for the trippy drive train.
+		leftMasterMotor.set(-left);
+
+		// none needed here.
+		rightMasterMotor.set(right);
 	}
 
 	public void stop() {
@@ -418,7 +384,7 @@ public class DriveTrainSystem extends Subsystem {
 	private void configFollower(DriveTrainConfigurations configType) {
 		// TODO create a switch for the enum
 		switch (configType) {
-		case Teleop_2F1x2: {
+		case Teleop_2F1x2:
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
 			leftSlave1Motor.set(leftMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
@@ -429,11 +395,9 @@ public class DriveTrainSystem extends Subsystem {
 			rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 
 			SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
-		}
 			break;
-		case Auto_5F1_LeftLead: // TODO: Does the right side need to be
-								// inverted?
-		{
+		case Auto_5F1_LeftLead:
+			// TODO: Does the right side need to be inverted?
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
 			leftSlave1Motor.set(leftMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
@@ -447,11 +411,9 @@ public class DriveTrainSystem extends Subsystem {
 			rightMasterMotor.set(leftMasterMotor.getDeviceID());
 
 			SmartDashboard.putString("Drive Train Config Type: ", "Auto_5F1_LeftLead");
-		}
 			break;
-		case Auto_5F1_RightLead: // TODO: Does the left side need to be
-									// inverted?
-		{
+		case Auto_5F1_RightLead:
+			// TODO: Does the left side need to be inverted?
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
 			leftSlave1Motor.set(rightMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
@@ -465,10 +427,9 @@ public class DriveTrainSystem extends Subsystem {
 			leftMasterMotor.set(rightMasterMotor.getDeviceID());
 
 			SmartDashboard.putString("Drive Train Config Type: ", "Auto_5F1_RightLead");
-		}
 			break;
-		case Auto_2F1x2: // same as teleop2f1x2 for now
-		{
+		case Auto_2F1x2:
+			// same as teleop2f1x2 for now
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
 			leftSlave1Motor.set(leftMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
@@ -479,10 +440,9 @@ public class DriveTrainSystem extends Subsystem {
 			rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 
 			SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2");
-		}
 			break;
-		default: // default to teleop2f1x2
-		{
+		default:
+			// default to teleop2f1x2
 			leftSlave1Motor.changeControlMode(TalonControlMode.Follower);
 			leftSlave1Motor.set(leftMasterMotor.getDeviceID());
 			leftSlave2Motor.changeControlMode(TalonControlMode.Follower);
@@ -493,16 +453,15 @@ public class DriveTrainSystem extends Subsystem {
 			rightSlave2Motor.set(rightMasterMotor.getDeviceID());
 
 			SmartDashboard.putString("Drive Train Config Type: ", "Teleop_2F1x2 -- defaulted");
-		}
 			break;
 		}
 	}
 
 	// GEARING BASED METHODS BELOW HERE
-	private void adjustGearing() { // low goes to high and high goes to low.
-		// Automagically.
-		// WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED //TODO: Remove
-		// later
+	private void adjustGearing() { 
+		// low goes to high and high goes to low Automagically. 
+		// WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED 
+		// TODO: Remove later
 		if (inLowGear()) {
 			leftShifter.set(kLowGearMin); // this works without feedback
 			rightShifter.set(kLowGearMin);
@@ -516,7 +475,8 @@ public class DriveTrainSystem extends Subsystem {
 		return in_low_gear_;
 	}
 
-	public void shift() { // WE CANNOT SHIFT, NEVER CALL THIS
+	public void shift() { 
+		// WE CANNOT SHIFT, NEVER CALL THIS
 		in_low_gear_ = !in_low_gear_;
 		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 	}
@@ -530,9 +490,10 @@ public class DriveTrainSystem extends Subsystem {
 		set(shudderMagnitude, -shudderMagnitude);
 	}
 
-	public void incrementShudder() { // slight logic change, first change it,
-										// then test how large/small it is.
-										// Should be foolproof now.
+	public void incrementShudder() { 
+		// slight logic change, first change it,
+		// then test how large/small it is.
+		// Should be foolproof now.
 		shudderMagnitude += kVBusShudderIncrement;
 
 		if (shudderMagnitude > kMaximumMagnitudePercentVBusShudder) {
