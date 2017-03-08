@@ -24,7 +24,7 @@ public class ClimbingSystem extends Subsystem {
 
 	private boolean running_;
 
-	// so a button press can move it between 4 states: 	
+	// so a button press can move it between 4 states:
 	// stopped, forward, stopped, backward and repeat that forever.
 	private int claw_running_ = 0;
 
@@ -68,13 +68,13 @@ public class ClimbingSystem extends Subsystem {
 		}
 
 		// tests for the 'case' of claw_running_
-		if (claw_running_ == 1) { 
+		if (claw_running_ == 1) {
 			// case 1: go forward. at full
 			cLimbingClawMotor.set(1);
-		} else if (claw_running_ == 3) { 
+		} else if (claw_running_ == 3) {
 			// case 3: go backwards
 			cLimbingClawMotor.set(-1);
-		} else { 
+		} else {
 			// case everything else (either 0 or 2): stop the motor. just
 			// in case. ;)
 			cLimbingClawMotor.set(0);

@@ -127,7 +127,6 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 	}
 
-
 	private void visionInit() {
 		if (vision_boiler_ == null) {
 			vision_boiler_ = new SocketVision("10.59.33.255", 5800);
@@ -169,7 +168,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 	}
-	
+
 	public void autonomousInit() {
 		gearCollectionSystem.autonomousInit();
 		climbingSystem.autonomousInit();
@@ -185,7 +184,7 @@ public class Robot extends IterativeRobot {
 
 		if (teleopCommand != null)
 			teleopCommand.cancel();
-		
+
 		visionInit();
 	}
 
@@ -252,18 +251,27 @@ public class Robot extends IterativeRobot {
 	private void configAutonomousCommand() {
 		switch (roboRioSystem.getDIP()) {
 		case 0:
-			autonomousCommand = new AttackGearPosition1();
+			autonomousCommand = new RedAttackGearPosition1();
 			break;
 		case 1:
-			autonomousCommand = new AttackGearPosition2();
+			autonomousCommand = new RedAttackGearPosition2();
 			break;
 		case 2:
-			autonomousCommand = new AttackGearPosition3();
+			autonomousCommand = new RedAttackGearPosition3();
+			break;
+		case 3:
+			autonomousCommand = new BlueAttackGearPosition1();
+			break;
+		case 4:
+			autonomousCommand = new BlueAttackGearPosition2();
+			break;
+		case 5:
+			autonomousCommand = new BlueAttackGearPosition3();
 			break;
 		}
 		System.out.println("Autonomous Command is: " + autonomousCommand.getName());
 	}
-	
+
 	public static String get_boiler_direction() {
 		return vision_boiler_.get_direction();
 	}
@@ -271,24 +279,24 @@ public class Robot extends IterativeRobot {
 	public static double get_boiler_degress_x() {
 		return vision_boiler_.get_degrees_x();
 	}
-	
+
 	public static double get_peg_distance_height() {
 		return vision_peg_.get_distance_height();
 	}
 
 	public static double get_peg_degrees_x() {
 		return vision_peg_.get_degrees_x();
-		
+
 	}
-	
+
 	public static String get_peg_direction() {
 		return vision_peg_.get_direction();
 	}
-	
+
 	public static boolean peg_vision_working() {
 		return vision_peg_.is_connected();
 	}
-	
+
 	public static double get_boiler_distance_height() {
 		return vision_boiler_.get_distance_height();
 	}

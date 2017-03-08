@@ -458,9 +458,9 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	// GEARING BASED METHODS BELOW HERE
-	private void adjustGearing() { 
-		// low goes to high and high goes to low Automagically. 
-		// WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED 
+	private void adjustGearing() {
+		// low goes to high and high goes to low Automagically.
+		// WE CANNOT SHIFT! THIS COMMAND IS (sorta) DEPRECATAED
 		// TODO: Remove later
 		if (inLowGear()) {
 			leftShifter.set(kLowGearMin); // this works without feedback
@@ -475,7 +475,7 @@ public class DriveTrainSystem extends Subsystem {
 		return in_low_gear_;
 	}
 
-	public void shift() { 
+	public void shift() {
 		// WE CANNOT SHIFT, NEVER CALL THIS
 		in_low_gear_ = !in_low_gear_;
 		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
@@ -490,7 +490,7 @@ public class DriveTrainSystem extends Subsystem {
 		set(shudderMagnitude, -shudderMagnitude);
 	}
 
-	public void incrementShudder() { 
+	public void incrementShudder() {
 		// slight logic change, first change it,
 		// then test how large/small it is.
 		// Should be foolproof now.

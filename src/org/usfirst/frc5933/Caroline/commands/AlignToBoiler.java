@@ -19,10 +19,10 @@ import org.usfirst.frc5933.Caroline.SocketVision;
  */
 public class AlignToBoiler extends Command {
 	private static boolean finished = false;
-	
+
 	// because only the center 1/3 is used on the pic
 	private static final double kDegreesToVBus = 42;
-	
+
 	private static final double kMaxShudder = 0.5;
 	private static final double kMinimumShudder = 0.1;
 
@@ -52,12 +52,12 @@ public class AlignToBoiler extends Command {
 	protected void execute() {
 		String dir = Robot.get_boiler_direction();
 		double x_dist = Math.abs(Robot.get_boiler_degress_x());
-		
+
 		// Try to keep output under 0.5, even that may be too high.
 		double vBusProportion = x_dist / kDegreesToVBus;
 
 		// forces number between max shudder (0.5) and min shudder (0.2)
-		if (vBusProportion > kMaxShudder) { 
+		if (vBusProportion > kMaxShudder) {
 			vBusProportion = kMaxShudder;
 		} else if (vBusProportion < kMinimumShudder) {
 			vBusProportion = kMinimumShudder;

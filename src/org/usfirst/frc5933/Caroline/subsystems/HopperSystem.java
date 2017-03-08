@@ -78,16 +78,16 @@ public class HopperSystem extends Subsystem {
 
 	public void teleopPeriodic() {
 		if (running_) {
-			if (useAccel) { 
+			if (useAccel) {
 				// driver preference whether they want this assistance or not.
 				// if combined acceleration vector tops threshold,
-				if (accelerometerOver(kImpactThreshold)) { 
-					
-					// stop shooting (agitation) immediately,
-					agitiatorMotor.set(0); 
+				if (accelerometerOver(kImpactThreshold)) {
 
-					running_ = !running_; 
-					// toggle running, and get out of here, 
+					// stop shooting (agitation) immediately,
+					agitiatorMotor.set(0);
+
+					running_ = !running_;
+					// toggle running, and get out of here,
 					// you don't need to finish this method.
 					return;
 				}
@@ -120,17 +120,17 @@ public class HopperSystem extends Subsystem {
 
 	public void autonomousPeriodic() {
 		if (running_) {
-			if (useAccel) { 
+			if (useAccel) {
 				// driver preference whether they want this assistance or not.
-				
+
 				// if either left or right acceleration tops 0.5,
-				// stop shooting (agitation) immediately 
-				if (accelerometerOver(kImpactThreshold)) { 
+				// stop shooting (agitation) immediately
+				if (accelerometerOver(kImpactThreshold)) {
 					agitiatorMotor.set(0);
-											
+
 					// toggle running
 					// get out of here, you don't need to finish this method.
-					running_ = !running_; 
+					running_ = !running_;
 					return;
 				}
 			}
@@ -175,11 +175,11 @@ public class HopperSystem extends Subsystem {
 
 		// this is horizontal, maybe accommodate for noise?
 		double y = Math.abs(accel.getY());
-		
-		// this is down, so accommodate for 1 g of force 
+
+		// this is down, so accommodate for 1 g of force
 		// (remember, RIO is upside down)
 		double z = Math.abs(accel.getZ()) - 1;
-		
+
 		// combine the three into one vector.
 		// If you EVER get over 'gs', cut the hopper
 		double totalMagnitude = Math.sqrt(x * x + y * y + z * z);
