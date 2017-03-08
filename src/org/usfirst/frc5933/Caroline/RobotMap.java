@@ -40,8 +40,8 @@ public class RobotMap {
 	public static DigitalInput gearCollectionSystemCloseFrontFlapperLimitSwitch;
 	public static DigitalInput gearCollectionSystemOpenBackFlapperLimitSwitch;
 	public static DigitalInput gearCollectionSystemOpenFrontFlapperLimitSwitch;
-	public static CANTalon climbingSystemClimbingClawMotor;
 	public static CANTalon climbingSystemClimbingSpindleMotor;
+	public static SpeedController climbingSystemCLimbingClawMotor;
 	public static CANTalon flyWheelSystemFlyWheelMotor;
 	public static SpeedController hopperSystemAgitiatorMotor;
 	public static CANTalon driveTrainSystemLeftMasterMotor;
@@ -89,11 +89,11 @@ public class RobotMap {
 		LiveWindow.addSensor("GearCollectionSystem", "OpenFrontFlapperLimitSwitch",
 				gearCollectionSystemOpenFrontFlapperLimitSwitch);
 
-		climbingSystemClimbingClawMotor = new CANTalon(15);
-		LiveWindow.addActuator("ClimbingSystem", "ClimbingClawMotor", climbingSystemClimbingClawMotor);
-
 		climbingSystemClimbingSpindleMotor = new CANTalon(19);
 		LiveWindow.addActuator("ClimbingSystem", "ClimbingSpindleMotor", climbingSystemClimbingSpindleMotor);
+
+		climbingSystemCLimbingClawMotor = new Spark(5);
+		LiveWindow.addActuator("ClimbingSystem", "CLimbingClawMotor", (Spark) climbingSystemCLimbingClawMotor);
 
 		flyWheelSystemFlyWheelMotor = new CANTalon(11);
 		LiveWindow.addActuator("FlyWheelSystem", "FlyWheelMotor", flyWheelSystemFlyWheelMotor);

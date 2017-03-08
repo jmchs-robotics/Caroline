@@ -415,7 +415,7 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.setInverted(rightInvert);
 	}
 
-    private void configFollower(DriveTrainConfigurations configType) {
+	private void configFollower(DriveTrainConfigurations configType) {
 		// TODO create a switch for the enum
 		switch (configType) {
 		case Teleop_2F1x2: {
@@ -516,11 +516,11 @@ public class DriveTrainSystem extends Subsystem {
 		return in_low_gear_;
 	}
 
-    public void shift() { // WE CANNOT SHIFT, NEVER CALL THIS
+	public void shift() { // WE CANNOT SHIFT, NEVER CALL THIS
 		in_low_gear_ = !in_low_gear_;
 		SmartDashboard.putBoolean("In Low Gear: ", inLowGear());
 	}
-    
+
 	// SHUDDER METHODS BELOW HERE
 	public void shudder_left() {
 		set(-shudderMagnitude, shudderMagnitude);
@@ -530,7 +530,9 @@ public class DriveTrainSystem extends Subsystem {
 		set(shudderMagnitude, -shudderMagnitude);
 	}
 
-	public void incrementShudder(){ //slight logic change, first change it, then test how large/small it is. Should be foolproof now.
+	public void incrementShudder() { // slight logic change, first change it,
+										// then test how large/small it is.
+										// Should be foolproof now.
 		shudderMagnitude += kVBusShudderIncrement;
 
 		if (shudderMagnitude > kMaximumMagnitudePercentVBusShudder) {

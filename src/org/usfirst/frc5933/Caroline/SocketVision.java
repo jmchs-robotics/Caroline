@@ -1,6 +1,8 @@
-											//TODO: Make duplicate socket at a different port to take input from
-package org.usfirst.frc5933.Caroline;		//the second target. Need two string parses and to ACTUALLY USE THE
-											//CODE SOMEWHERE ELSE! Driver assist? Auto commands? Mayonnaise?
+//TODO: Make duplicate socket at a different port to take input from
+package org.usfirst.frc5933.Caroline; //the second target. Need two string parses and to ACTUALLY USE THE
+
+										//CODE SOMEWHERE ELSE! Driver assist? Auto commands? Mayonnaise?
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
