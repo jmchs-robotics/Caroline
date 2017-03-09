@@ -70,10 +70,10 @@ public class ClimbingSystem extends Subsystem {
 		// tests for the 'case' of claw_running_
 		if (claw_running_ == 1) {
 			// case 1: go forward. at full
-			cLimbingClawMotor.set(1);
+			cLimbingClawMotor.set(0.5);
 		} else if (claw_running_ == 3) {
 			// case 3: go backwards
-			cLimbingClawMotor.set(-1);
+			cLimbingClawMotor.set(-0.5);
 		} else {
 			// case everything else (either 0 or 2): stop the motor. just
 			// in case. ;)
