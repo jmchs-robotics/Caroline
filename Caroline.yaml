@@ -18,7 +18,7 @@ Children:
           default: '0'
           name: Output Channel (PWM)
           validators: &id003 [PWMOutput]
-          value: '2'
+          value: '1'
       Base: Speed Controller
       Name: FrontFlapperMotor
     - Children: []
@@ -34,7 +34,7 @@ Children:
           default: '0'
           name: Output Channel (PWM)
           validators: *id003
-          value: '1'
+          value: '2'
       Base: Speed Controller
       Name: BackFlapperMotor
     Properties:
@@ -61,7 +61,7 @@ Children:
           default: '2'
           name: CAN ID
           validators: &id006 [CANID]
-          value: '19'
+          value: '15'
       Base: CAN Talon
       Name: ClimbingSpindleMotor
     - Children: []
@@ -129,7 +129,7 @@ Children:
           default: Talon
           name: Type
           validators: null
-          value: Victor
+          value: TalonSRX
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
           choices: *id002
           default: '0'
@@ -137,7 +137,7 @@ Children:
           validators: *id003
           value: '0'
       Base: Speed Controller
-      Name: AgitiatorMotor
+      Name: AgitatorMotor
     Properties:
       Default command parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
@@ -411,7 +411,7 @@ Children:
           name: Command
           type: Command
           validators: *id014
-          value: BackFlapOpen
+          value: NullCommand
         When to Run: !!robotbuilder.data.properties.ChoicesProperty
           choices: *id015
           default: whileHeld
@@ -1722,7 +1722,7 @@ Children:
         validators: null
         value: []
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: GearCollectionSystem}
+        name: Requires, type: Subsystem, validators: null, value: DriveTrainSystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: &id039 []
         name: Parameter presets
@@ -1731,7 +1731,7 @@ Children:
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
-    Name: FlapTheHellOut
+    Name: SimpleDriveStraight
   Properties: {}
   Base: Commands
   Name: Commands

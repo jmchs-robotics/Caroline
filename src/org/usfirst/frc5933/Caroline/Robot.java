@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc5933.Caroline.commands.*;
 import org.usfirst.frc5933.Caroline.subsystems.*;
 
@@ -177,6 +179,7 @@ public class Robot extends IterativeRobot {
 		roboRioSystem.autonomousInit();
 
 		// schedule the autonomous command (example)
+		configAutonomousCommand();
 		if (autonomousCommand != null)
 			autonomousCommand.start();
 
@@ -248,29 +251,34 @@ public class Robot extends IterativeRobot {
 
 	private void configAutonomousCommand() {
 		switch (roboRioSystem.getDIP()) {
-		case 0:
+		case 0:		//0000000
 			autonomousCommand = new RedAttackGearPosition1();
 			break;
-		case 1:
+		case 1:		//0000001
 			autonomousCommand = new RedAttackGearPosition2();
 			break;
-		case 2:
+		case 2:		//0000010
 			autonomousCommand = new RedAttackGearPosition3();
 			break;
-		case 3:
+		case 3:		//0000011
 			autonomousCommand = new BlueAttackGearPosition1();
 			break;
-		case 4:
+		case 4:		//0000100
 			autonomousCommand = new BlueAttackGearPosition2();
 			break;
-		case 5:
+		case 5:		//0000101
 			autonomousCommand = new BlueAttackGearPosition3();
 			break;
-		default:
+		case 6:		//0000110
+			autonomousCommand = new SimpleDriveStraight();
+			break;
+		default:	//1111111
 			autonomousCommand = new NullCommand();
 			break;
 		}
-		System.out.println("Autonomous Command is: " + autonomousCommand.getName());
+		autonomousCommand = new DriveToPeg();
+		SmartDashboard.putString("Autonomous Command is: ", autonomousCommand.getName());
+		SmartDashboard.putNumber("Auto Run Case: ", roboRioSystem.getDIP());
 	}
 
 	public static String get_boiler_direction() {

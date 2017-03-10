@@ -46,7 +46,6 @@ public class FlyWheelSystem extends Subsystem {
 			{ 207.01, -2380, 1.8, 5.4, 0.0, 0.0 }, // tenth 16 ft
 			{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } // Overflow point for slop 17 ft
 	};
-	// 2700 speed; f = 1.8, p = 3.2
 
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
@@ -91,17 +90,17 @@ public class FlyWheelSystem extends Subsystem {
 	// f = 100% * (full forward output) / (native units per 100 ms)
 	// f = 100% * 1023 / ((5000 / 60 / 10) * 80) IS MAYBE INDEPENDENT FROM
 	// SYSTEM
-	private static final double kFGain = 1.8; // feed-forward gain, was 1.5345
+	private static final double kFGain = 0; // feed-forward gain, was 1.5345
 
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
 	// double until motor oscillates (too much p) or is adequate for system.
 	// ONLY TEST WITH SYSTEM DRAG ON MOTOR
-	private static final double kPGain = 6.4; // p gain, was 0.22
+	private static final double kPGain = 0; // p gain, was 0.22
 
 	// smoothes motion from error to setpoint.
 	// Start with 10 * pgain
-	private static final double kDGain = 64; // d gain
+	private static final double kDGain = 0; // d gain
 
 	// If dgain doesn't quite get to setpoint, add igain
 	// start with 1/100 * pgain
@@ -339,7 +338,7 @@ public class FlyWheelSystem extends Subsystem {
 	}
 
 	public double maintainFlywheelSpeed(double inches) {
-		double rpm = FlyWheelSystem.inchesToRpm(inches);
+		double rpm = runFancyPIDMaintenance(inches);
 		return rpm;
 	}
 

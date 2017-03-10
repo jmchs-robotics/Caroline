@@ -132,6 +132,7 @@ public class DriveTrainSystem extends Subsystem {
 
 	// i gain
 	private static final double kIGain = 0.0;
+	public static final double kLeftCoefficent = 1.2;
 
 	public DriveTrainSystem() {
 		super();
@@ -276,7 +277,7 @@ public class DriveTrainSystem extends Subsystem {
 			rightMasterMotor.set(rotations);
 
 			// *in whiny voice* are we there yet?
-			if (leftMasterMotor.getClosedLoopError() == 0 && rightMasterMotor.getClosedLoopError() == 0) {
+			if (leftMasterMotor.getClosedLoopError()  <= 0 && rightMasterMotor.getClosedLoopError() <= 0) {
 				return true;
 			}
 		default:
@@ -538,5 +539,10 @@ public class DriveTrainSystem extends Subsystem {
 
 	public void autonomousPeriodic() {
 		adjustGearing();
+	}
+
+	public double getLeftCoefficient() {
+		// TODO Auto-generated method stub
+		return kLeftCoefficent;
 	}
 }

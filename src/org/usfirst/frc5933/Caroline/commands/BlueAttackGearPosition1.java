@@ -51,7 +51,7 @@ public class BlueAttackGearPosition1 extends CommandGroup {
 		// or will that throw an error as DriveStraight doesn't technically
 		// exist yet?
 
-		DriveStraight.setDriveTrainConfig(DriveTrainConfigurations.Auto_5F1_RightLead);
+		DriveStraight.setDriveTrainConfig(DriveTrainConfigurations.Auto_5F1_LeftLead);
 		DriveStraight.setFeet(10);
 		DriveStraight.usePresets(true);
 
