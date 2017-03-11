@@ -52,6 +52,7 @@ public class ClimbingSystem extends Subsystem {
 	}
 
 	public void robotInit() {
+
 	}
 
 	public void teleopInit() {
@@ -63,7 +64,7 @@ public class ClimbingSystem extends Subsystem {
 
 	public void teleopPeriodic() {
 		if (running_) {
-			climbingSpindleMotor.set(-10000);
+			climbingSpindleMotor.set(-1);
 		} else {
 			climbingSpindleMotor.set(0);
 		}
@@ -96,11 +97,10 @@ public class ClimbingSystem extends Subsystem {
 	 */
 	public void toggleClaw() {
 		claw_running_++;
-		SmartDashboard.putNumber("Claw Motor Running Case ", claw_running_);
-
+		
 		if (claw_running_ > 1)
 			claw_running_ = 0;
 		
-		SmartDashboard.putNumber("Climbing Motor Running Case ", claw_running_);
+		SmartDashboard.putNumber("Claw Running Case ", claw_running_);
 	}
 }

@@ -135,7 +135,7 @@ public class HopperSystem extends Subsystem {
 					return;
 				}
 			}
-			agitatorMotor.set(agitatorSpeed_);
+			customReversing();
 		} else {
 			agitatorMotor.set(0);
 		}

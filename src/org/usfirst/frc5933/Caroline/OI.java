@@ -99,6 +99,7 @@ public class OI {
         aButtonSub.whenPressed(new AgitateFaster());
         xButtonSub = new JoystickButton(subsystemJoystick, 3);
         xButtonSub.whenPressed(new FlyWheelMode());
+       
         driverJoystick = new Joystick(0);
         
         startButton = new JoystickButton(driverJoystick, 8);

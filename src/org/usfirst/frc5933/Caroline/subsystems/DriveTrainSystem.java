@@ -31,7 +31,7 @@ public class DriveTrainSystem extends Subsystem {
 	public enum DriveTrainConfigurations {
 		Auto_5F1_RightLead, Auto_5F1_LeftLead, Teleop_2F1x2, Auto_2F1x2
 	};
-
+	public static final double kLeftCoefficent = 1.05;
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
 
@@ -111,7 +111,7 @@ public class DriveTrainSystem extends Subsystem {
 	// INDEPENDENT FROM SYSTEM
 
 	// feed-forward gain
-	private static final double kFGain = 0.001157407;
+	private static final double kFGain = 0.0;
 
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
@@ -132,7 +132,6 @@ public class DriveTrainSystem extends Subsystem {
 
 	// i gain
 	private static final double kIGain = 0.0;
-	public static final double kLeftCoefficent = 1.2;
 
 	public DriveTrainSystem() {
 		super();
