@@ -272,6 +272,18 @@ public class Robot extends IterativeRobot {
 		case 6:		//0000110
 			autonomousCommand = new SimpleDriveStraight();
 			break;
+		case 7:
+			autonomousCommand = new TurnLeft();
+			break;
+		case 8:
+			autonomousCommand = new TurnRight();
+			break;
+		case 9:
+			autonomousCommand = new AlignToBoiler();
+			break;
+		case 10:
+			autonomousCommand = new DriveToPeg();
+			break;
 		default:	//1111111
 			autonomousCommand = new NullCommand();
 			break;
