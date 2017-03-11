@@ -250,7 +250,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	private void configAutonomousCommand() {
-		switch (roboRioSystem.getDIP() - 112) {	//the -112 is for the busted switches. All binary is reversed here.
+		switch (roboRioSystem.getDIP()) {
 		case 0:		//0000000
 			autonomousCommand = new RedAttackGearPosition1();
 			break;
@@ -278,7 +278,7 @@ public class Robot extends IterativeRobot {
 		}
 		//autonomousCommand = new SimpleDriveStraight();
 		SmartDashboard.putString("Autonomous Command is: ", autonomousCommand.getName());
-		SmartDashboard.putNumber("Auto Run Case: ", roboRioSystem.getDIP() - 112);
+		SmartDashboard.putNumber("Auto Run Case: ", roboRioSystem.getDIP());
 	}
 
 	public static String get_boiler_direction() {
