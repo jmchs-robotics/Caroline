@@ -91,6 +91,6 @@ public class RoboRioSystem extends Subsystem {
 			}
 			++index;
 		}
-		return sum;
+		return sum - 32;
 	}
 }
