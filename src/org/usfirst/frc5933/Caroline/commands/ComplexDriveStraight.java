@@ -18,9 +18,8 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveStraight extends Command {
-
-	private static boolean usePresets_ = false;
+public class ComplexDriveStraight extends Command {
+	
 	private static double feetPreset_ = 0;
 	private static DriveTrainConfigurations config_ = null;
 
@@ -43,37 +42,17 @@ public class DriveStraight extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		if (usePresets_) {
-
-			if (!Robot.driveTrainSystem.setStraightMotionMagic(feetPreset_, config_)) {
-				// if you aren't using a valid config, get out of here!
-				end();
-			}
-
-		} else {
-			setTimeout(10);
-		}
+		Robot.driveTrainSystem.setStraightMotionMagic(feetPreset_, config_);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		if (usePresets_) {
-
-			Robot.driveTrainSystem.goStraightMotionMagic(feetPreset_, config_);
-
-		} else {
-			Robot.driveTrainSystem.tankDrive(0.5, 0.5);
-		}
+		Robot.driveTrainSystem.goStraightMotionMagic(feetPreset_, config_);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		if (usePresets_) {
 			return Robot.driveTrainSystem.goStraightMotionMagic(feetPreset_, config_);
-
-		} else {
-			return isTimedOut();
-		}
 	}
 
 	// Called once after isFinished returns true
@@ -85,10 +64,6 @@ public class DriveStraight extends Command {
 	// subsystems is scheduled to run
 	protected void interrupted() {
 		end();
-	}
-
-	public static void usePresets(boolean useThem) {
-		usePresets_ = useThem;
 	}
 
 	public static void setFeet(double f) {
