@@ -27,11 +27,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class DriveTrainSystem extends Subsystem {
+	/*
+	 * the kRobot_* constants are all robot dimensions. Is it worth it to make these into either an ArrayList or a class?
+	 * I only need these for now, but decided it was important to establish this convention now.
+	 */
+	private final static double kRobot_CenterTurningRadius = 13.5;	//NEEDS TO BE PRECISELY MEASURED
+	private final static double kRobot_CenterTurningCircumference = 2 * kRobot_CenterTurningRadius * Math.PI;
+	private static final double kRobot_EncoderToOutputProportion = 0;	//this is a 'tested' coefficient,
+																		//between what we tell the robot to do and what it actually does.
 
 	public enum DriveTrainConfigurations {
 		Auto_5F1_RightLead, Auto_5F1_LeftLead, Teleop_2F1x2, Auto_2F1x2
 	};
+	
+	public enum Direction {
+		Left, Right, Forwards, Backwards
+	};
+	
 	public static final double kLeftCoefficent = 1.05;
+	
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
 
@@ -111,28 +125,38 @@ public class DriveTrainSystem extends Subsystem {
 	// INDEPENDENT FROM SYSTEM
 
 	// feed-forward gain
-	private static final double kFGain = 0.0;
-
+	private static final double kFGain_R = 0.0011574074;	//needs to be experimentally tuned
+	private static final double kFGain_L = 0.0011574074;	//needs to be experimentally tuned
+	
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
 	// double until motor oscillates (too much p) or is adequate for system.
 	// ONLY TEST WITH SYSTEM DRAG ON MOTOR
 
 	// p gain
-	private static final double kPGain = 0.0;
-
+	private static final double kPGain_R = 0.0;
+	private static final double kPGain_L = 0.0;
+	
 	// smoothes motion from error to setpoint.
 	// Start with 10 * pgain
 
 	// d gain
-	private static final double kDGain = 0.0;
+	private static final double kDGain_R = 0.0;
+	private static final double kDGain_L = 0.0;
 
 	// If dgain doesn't quite get to setpoint, add igain
 	// start with 1/100 * pgain
 
 	// i gain
-	private static final double kIGain = 0.0;
+	private static final double kIGain_R = 0.0;
+	private static final double kIGain_L = 0.0;
 
+	
+	
+	private static double leftArcLength = 0;
+	private static double rightArcLength = 0;
+	
+	
 	public DriveTrainSystem() {
 		super();
 
@@ -190,7 +214,7 @@ public class DriveTrainSystem extends Subsystem {
 		rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	}
 
-	private void configMotionMagicStraight(DriveTrainConfigurations config) {
+	private void configMotionMagic(DriveTrainConfigurations config) {
 		// Totally "not" arbitrary choice
 		configFollower(config);
 
@@ -204,7 +228,7 @@ public class DriveTrainSystem extends Subsystem {
 			// configure the feedback device
 			configLeftFeedback();
 			// configure the PID loop constants
-			configLeftPID(0, kFGain, kPGain, kIGain, kDGain);
+			configLeftPID(0, kFGain_L, kPGain_L, kIGain_L, kDGain_L);
 
 			break;
 		case Auto_5F1_RightLead:
@@ -212,7 +236,7 @@ public class DriveTrainSystem extends Subsystem {
 
 			configRightFeedback();
 
-			configRightPID(0, kFGain, kPGain, kIGain, kDGain);
+			configRightPID(0, kFGain_R, kPGain_R, kIGain_R, kDGain_R);
 			break;
 		case Auto_2F1x2:
 			leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
@@ -221,8 +245,8 @@ public class DriveTrainSystem extends Subsystem {
 			configRightFeedback();
 			configLeftFeedback();
 
-			configRightPID(0, kFGain, kPGain, kIGain, kDGain);
-			configLeftPID(0, kFGain, kPGain, kIGain, kDGain);
+			configRightPID(0, kFGain_R, kPGain_R, kIGain_R, kDGain_R);
+			configLeftPID(0, kFGain_L, kPGain_L, kIGain_L, kDGain_L);
 
 			break;
 		default:
@@ -236,7 +260,8 @@ public class DriveTrainSystem extends Subsystem {
 	// can have a boolean statement checking whether this has
 	// actually reached the set rotations.
 	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config) {
-		configMotionMagicStraight(config);
+		configMotionMagic(config);
+		
 		switch (config) {
 		case Auto_5F1_LeftLead:
 			leftMasterMotor.set(rotations);
@@ -276,7 +301,7 @@ public class DriveTrainSystem extends Subsystem {
 			rightMasterMotor.set(rotations);
 
 			// *in whiny voice* are we there yet?
-			if (leftMasterMotor.getClosedLoopError()  <= 0 && rightMasterMotor.getClosedLoopError() <= 0) {
+			if (leftMasterMotor.getClosedLoopError()  == 0 && rightMasterMotor.getClosedLoopError() == 0) {
 				return true;
 			}
 		default:
@@ -286,6 +311,75 @@ public class DriveTrainSystem extends Subsystem {
 		}
 		// you obviously ain't there yet.
 		return false;
+	}
+	
+	/* Quick(ish) info about turningMotionMagic:
+	 * This method acts as a setter for right and left turning arc lengths.
+	 * 
+	 * When a robot turns, it can either turn around its center or around a side, or somewhere in between.
+	 * This method simplifies that to only center or side.
+	 * 
+	 * If a robot were to turn around its center, the radius of the circle its wheels trace in a 360 degree
+	 * revolution is the 1/2 the width of the robot, left wheel to right wheel, with the center of the robot
+	 * acting as the center of the circle.
+	 * 
+	 * If that same robot were to turn around its side, the radius of the circle its wheels trace in a 360
+	 * degree revolution is the entire width of the robot, left wheel to right wheel, with either the left 
+	 * or the right wheel acting as the center of the circle.
+	 * 
+	 * Therefore, first determine LEFT or RIGHT turn from char dir, then aroundCenter or not, then do the turn.
+	 * 
+	 * Quick note about turning: to turn a bot to the right (or left), reverse the right (or left) side of the drivetrain or power the left (or right)
+	 * side. This will assume that, for a Right turn NOT aroundCenter, the Right side of the drivetrain will stay static.
+	 */
+	public void setTurningMotionMagic(Direction dir, double degrees, boolean aroundCenter){
+		configMotionMagic(DriveTrainConfigurations.Auto_2F1x2);	//because you're going to need to turn both sides independently either way.
+		
+		
+		double proportion = degrees / 360;
+		double tmp_leftArcLength = proportion * kRobot_CenterTurningCircumference;
+		double tmp_rightArcLength = proportion * kRobot_CenterTurningCircumference;
+		
+		switch(dir){
+		case Left:
+			if(aroundCenter){
+				tmp_leftArcLength = -tmp_leftArcLength;
+			}else{
+				tmp_leftArcLength = 0;
+				tmp_rightArcLength *= 2;
+			}
+			break;
+			
+		case Right:
+			if(aroundCenter){
+				tmp_rightArcLength = -tmp_rightArcLength;
+			}else{
+				tmp_rightArcLength = 0;
+				tmp_leftArcLength *= 2;
+			}
+			break;
+			
+		default:	//if you aren't turning, you're using this method wrong. So leave. Now.
+			tmp_leftArcLength = 0;
+			tmp_rightArcLength = 0;
+			break;
+		}
+		leftArcLength = tmp_leftArcLength * kRobot_EncoderToOutputProportion;
+		rightArcLength = tmp_leftArcLength * kRobot_EncoderToOutputProportion;
+		
+		leftMasterMotor.set(leftArcLength);
+		rightMasterMotor.set(rightArcLength);
+	}
+	
+	public boolean goTurningMotionMagic(int precision){
+		precision = Math.abs(precision);
+		
+		leftMasterMotor.set(leftArcLength);
+		rightMasterMotor.set(rightArcLength);
+		
+		boolean leftFinished = ((leftMasterMotor.getClosedLoopError() <= precision) && (leftMasterMotor.getClosedLoopError() >= -precision));
+		boolean rightFinished = ((rightMasterMotor.getClosedLoopError() <= precision) && (rightMasterMotor.getClosedLoopError() >= -precision));
+		return leftFinished && rightFinished;
 	}
 
 	private void configLeftPID(int profileNumber, double f, double p, double i, double d) {

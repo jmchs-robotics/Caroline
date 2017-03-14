@@ -125,7 +125,7 @@ public class OI {
 
 
         // SmartDashboard Buttons
-        SmartDashboard.putData("DriveStraight", new DriveStraight());
+        SmartDashboard.putData("ComplexDriveStraight", new ComplexDriveStraight());
         SmartDashboard.putData("RedAttackGearPosition1", new RedAttackGearPosition1());
         SmartDashboard.putData("RedAttackGearPosition2", new RedAttackGearPosition2());
         SmartDashboard.putData("RedAttackGearPosition3", new RedAttackGearPosition3());
