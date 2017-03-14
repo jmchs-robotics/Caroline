@@ -33,7 +33,7 @@ public class DriveTrainSystem extends Subsystem {
 	 */
 	private final static double kRobot_CenterTurningRadius = 13.5;	//NEEDS TO BE PRECISELY MEASURED
 	private final static double kRobot_CenterTurningCircumference = 2 * kRobot_CenterTurningRadius * Math.PI;
-	private static final double kRobot_EncoderToOutputProportion = 0;	//this is a 'tested' coefficient,
+	private static final double kRobot_EncoderToOutputProportion = 1;	//this is a 'tested' coefficient,
 																		//between what we tell the robot to do and what it actually does.
 
 	public enum DriveTrainConfigurations {
@@ -259,29 +259,33 @@ public class DriveTrainSystem extends Subsystem {
 	// and it will run the delivered rotations. The finish() method
 	// can have a boolean statement checking whether this has
 	// actually reached the set rotations.
-	public boolean setStraightMotionMagic(double rotations, DriveTrainConfigurations config) {
+	public boolean setStraightMotionMagic(double distance, DriveTrainConfigurations config) {
 		configMotionMagic(config);
+		
+		distance *= kRobot_EncoderToOutputProportion;
 		
 		switch (config) {
 		case Auto_5F1_LeftLead:
-			leftMasterMotor.set(rotations);
+			leftMasterMotor.set(distance);
 			break;
 		case Auto_5F1_RightLead:
-			rightMasterMotor.set(rotations);
+			rightMasterMotor.set(distance);
 			break;
 		case Auto_2F1x2:
-			leftMasterMotor.set(rotations);
-			rightMasterMotor.set(rotations);
+			leftMasterMotor.set(distance);
+			rightMasterMotor.set(distance);
 		default:
 			return false;
 		}
 		return true;
 	}
 
-	public boolean goStraightMotionMagic(double rotations, DriveTrainConfigurations config) {
+	public boolean goStraightMotionMagic(double distance, DriveTrainConfigurations config) {
+		distance *= kRobot_EncoderToOutputProportion;
+		
 		switch (config) {
 		case Auto_5F1_LeftLead:
-			leftMasterMotor.set(rotations);
+			leftMasterMotor.set(distance);
 
 			// *in whiny voice* are we there yet? love this comment :)
 			if (leftMasterMotor.getClosedLoopError() == 0) {
@@ -289,7 +293,7 @@ public class DriveTrainSystem extends Subsystem {
 			}
 			break;
 		case Auto_5F1_RightLead:
-			rightMasterMotor.set(rotations);
+			rightMasterMotor.set(distance);
 
 			// *in whiny voice* are we there yet?
 			if (rightMasterMotor.getClosedLoopError() == 0) {
@@ -297,8 +301,8 @@ public class DriveTrainSystem extends Subsystem {
 			}
 			break;
 		case Auto_2F1x2:
-			leftMasterMotor.set(rotations);
-			rightMasterMotor.set(rotations);
+			leftMasterMotor.set(distance);
+			rightMasterMotor.set(distance);
 
 			// *in whiny voice* are we there yet?
 			if (leftMasterMotor.getClosedLoopError()  == 0 && rightMasterMotor.getClosedLoopError() == 0) {
@@ -331,10 +335,11 @@ public class DriveTrainSystem extends Subsystem {
 	 * 
 	 * Quick note about turning: to turn a bot to the right (or left), reverse the right (or left) side of the drivetrain or power the left (or right)
 	 * side. This will assume that, for a Right turn NOT aroundCenter, the Right side of the drivetrain will stay static.
+	 * 
+	 * THIS METHOD SHOULD BE CALLED ONE TIME ONLY, IN THE INITIALIZE METHOD OF A COMMAND.
 	 */
 	public void setTurningMotionMagic(Direction dir, double degrees, boolean aroundCenter){
 		configMotionMagic(DriveTrainConfigurations.Auto_2F1x2);	//because you're going to need to turn both sides independently either way.
-		
 		
 		double proportion = degrees / 360;
 		double tmp_leftArcLength = proportion * kRobot_CenterTurningCircumference;
@@ -370,7 +375,10 @@ public class DriveTrainSystem extends Subsystem {
 		leftMasterMotor.set(leftArcLength);
 		rightMasterMotor.set(rightArcLength);
 	}
-	
+	/*
+	 * This method should be called during execute and isFinished of a command
+	 * that initialized with the above method.
+	 */
 	public boolean goTurningMotionMagic(int precision){
 		precision = Math.abs(precision);
 		
@@ -379,6 +387,7 @@ public class DriveTrainSystem extends Subsystem {
 		
 		boolean leftFinished = ((leftMasterMotor.getClosedLoopError() <= precision) && (leftMasterMotor.getClosedLoopError() >= -precision));
 		boolean rightFinished = ((rightMasterMotor.getClosedLoopError() <= precision) && (rightMasterMotor.getClosedLoopError() >= -precision));
+		
 		return leftFinished && rightFinished;
 	}
 
