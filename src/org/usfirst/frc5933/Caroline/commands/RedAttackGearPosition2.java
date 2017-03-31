@@ -47,6 +47,7 @@ public class RedAttackGearPosition2 extends CommandGroup {
 		// so they don't accidentally run the basic 10 second tank drive?
 		// or will that throw an error as DriveStraight doesn't technically
 		// exist yet?
+    	
     	//when auto starts, the flywheel will start automatically
     	//addSequential(new ToggleFlywheel());
     	addSequential(new DelayCommand(1.5));		//so wait for it to spin up
