@@ -50,8 +50,6 @@ public class BlueAttackGearPosition1 extends CommandGroup {
 		// so they don't accidentally run the basic 10 second tank drive?
 		// or will that throw an error as DriveStraight doesn't technically
 		// exist yet?
-		SimpleDriveStraight.setTheTimeout(2.5);
-		TurnRight.setDegrees(2.5);
 
 	}
 }

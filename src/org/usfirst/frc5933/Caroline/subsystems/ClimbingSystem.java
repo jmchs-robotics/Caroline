@@ -64,7 +64,7 @@ public class ClimbingSystem extends Subsystem {
 
 	public void teleopPeriodic() {
 		if (running_) {
-			climbingSpindleMotor.set(-1);
+			climbingSpindleMotor.set(1);
 		} else {
 			climbingSpindleMotor.set(0);
 		}

@@ -36,15 +36,15 @@ public class FlyWheelSystem extends Subsystem {
 			{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, // 0 ft
 			{ 96, -1950, 1.8, 6.4, 0.0, 0.0 }, // second coordinate point 8
 			// ft
-			{ 106, -2025, 1.8, 6.9, 0.0, 0.0 }, // third 9 ft
-			{ 112, -2075, 1.8, 6.5, 0.0, 0.0 }, // fourth 10 ft
-			{ 118, -2100, 1.8, 6.4, 0.0, 0.0 }, // fifth 11 ft
-			{ 126, -2235, 1.8, 6.4, 0.0, 0.0 }, // sixth 12 ft
-			{ 135, -2250, 1.8, 6.4, 0.0, 0.0 }, // seventh 13 ft
-			{ 141, -2287, 1.8, 6.0, 0.0, 0.0 }, // eighth 14 ft
-			{ 148, -2325, 1.8, 5.8, 0.0, 0.0 }, // ninth 15 ft
-			{ 154, -2380, 1.8, 5.4, 0.0, 0.0 }, // tenth 16 ft
-			{ 160, -2420, 1.8, 5.2, 0.0, 0.0 }  // extrapolated 17 ft.
+			{ 106, 2025, 1.8, 6.9, 0.0, 0.0 }, // third 9 ft
+			{ 112, 2075, 1.8, 6.5, 0.0, 0.0 }, // fourth 10 ft
+			{ 118, 2100, 1.8, 6.4, 0.0, 250.0 }, // fifth 11 ft
+			{ 126, 2235, 1.8, 6.4, 0.0, 275.0 }, // sixth 12 ft
+			{ 135, 2250, 1.8, 6.4, 0.0, 200.0 }, // seventh 13 ft
+			{ 141, 2287, 1.8, 6.0, 0.0, 0.0 }, // eighth 14 ft
+			{ 148, 2325, 1.8, 5.8, 0.0, 0.0 }, // ninth 15 ft
+			{ 154, 2380, 1.8, 5.4, 0.0, 0.0 }, // tenth 16 ft
+			{ 160, 2420, 1.8, 5.2, 0.0, 0.0 }  // extrapolated 17 ft.
 		};
 
 		public final static float kNominalVoltage = 0;
@@ -131,11 +131,11 @@ public class FlyWheelSystem extends Subsystem {
 		public void robotInit() {
 			configVoltages(kNominalVoltage, kPeakVoltage);
 			configFeedback();
-			configPID(0, kFGain, kPGain, kIGain, kDGain);
+			configFPID(0, kFGain, kPGain, kIGain, kDGain);
 			flyWheelMotor.setInverted(isWheelInverted);
 		}
 
-		private void configPID(int profileNumber, double f, double p, double i, double d) {
+		private void configFPID(int profileNumber, double f, double p, double i, double d) {
 			/* set closed loop gains in profile 0 or profile 1 only */
 			/*
 			 * from example at
@@ -160,7 +160,10 @@ public class FlyWheelSystem extends Subsystem {
 		}
 
 		public void autonomousInit() {
-
+			tuning_ = false;
+			running_ = false;
+			speed_ = runFancyPIDMaintenance(135);	//approx 13 ft (on the table)
+													//is probably too long
 		}
 
 		private void configVoltages(float nominal, double peak) {
@@ -173,7 +176,7 @@ public class FlyWheelSystem extends Subsystem {
 			flyWheelMotor.reverseSensor(isWheelInverted); // Sensor needs to read
 			// same
 			// direction as motor spins up
-			// (positive-positive).
+			// (positive-positive or negative-negative).
 			flyWheelMotor.configEncoderCodesPerRev(kEncoderPerRev_);
 		}
 
@@ -251,14 +254,14 @@ public class FlyWheelSystem extends Subsystem {
 				// SmartDashboard.putNumber("Vision-based distance: ",
 				// Robot.visionBoiler_.get_distance_height());
 			}
-
+ 
 			if (tuning_) {
 				double fg = SmartDashboard.getNumber("F Gain ", 0.0);
 				double pg = SmartDashboard.getNumber("P Gain ", 0.0);
 				double ig = SmartDashboard.getNumber("I Gain ", 0.0);
 				double dg = SmartDashboard.getNumber("D Gain ", 0.0);
 
-				Robot.flyWheelSystem.configPID(0, fg, pg, ig, dg);
+				configFPID(0, fg, pg, ig, dg);
 			}
 		}
 
@@ -313,6 +316,8 @@ public class FlyWheelSystem extends Subsystem {
 				} else {
 					goSpeed();
 				}
+			}else{
+				flyWheelMotor.set(0);
 			}
 		}
 
@@ -323,6 +328,8 @@ public class FlyWheelSystem extends Subsystem {
 				} else {
 					goSpeed();
 				}
+			}else{
+				flyWheelMotor.set(0);
 			}
 		}
 
@@ -419,8 +426,13 @@ public class FlyWheelSystem extends Subsystem {
 			double[] infoTable = inchesToRpmPIDF(inches);
 			double rpm = infoTable[1];
 
-			configPID(0, infoTable[2], infoTable[3], infoTable[4], infoTable[6]);
+			configFPID(0, infoTable[2], infoTable[3], infoTable[4], infoTable[5]);
 
+			SmartDashboard.putNumber("RPM maint.", infoTable[1]);
+			SmartDashboard.putNumber("F maint.", infoTable[2]);
+			SmartDashboard.putNumber("P maint.", infoTable[3]);
+			SmartDashboard.putNumber("I maint.", infoTable[4]);
+			SmartDashboard.putNumber("D maint.", infoTable[5]);
 			return rpm;
 		}
 

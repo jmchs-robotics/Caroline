@@ -3,10 +3,14 @@ package org.usfirst.frc5933.Caroline.commands;
 import edu.wpi.first.wpilibj.command.*;
 
 public class DelayCommand extends Command{
-	private static double timeout_ = 0;
+	private double timeout_ = 0;
+	
+	public DelayCommand(double timeout){
+		timeout_ = timeout;
+	}
 	
 	public DelayCommand(){
-		
+		timeout_ = 5;
 	}
 	
 	protected void initialize(){
@@ -27,10 +31,5 @@ public class DelayCommand extends Command{
 	
 	protected void interrupted(){
 		end();
-	}
-	
-	public static void setTheTimeout(double timeout){
-		timeout_ = timeout;
-		
 	}
 }

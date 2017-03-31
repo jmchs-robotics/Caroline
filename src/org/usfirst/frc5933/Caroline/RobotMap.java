@@ -143,5 +143,6 @@ public class RobotMap {
 
 		// configure the accelerometer to 4g sensing range
 		autoShutOffSensor = new BuiltInAccelerometer(Accelerometer.Range.k4G);
+		
 	}
 }

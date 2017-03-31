@@ -31,10 +31,36 @@ public class DriveTrainSystem extends Subsystem {
 	 * the kRobot_* constants are all robot dimensions. Is it worth it to make these into either an ArrayList or a class?
 	 * I only need these for now, but decided it was important to establish this convention now.
 	 */
-	private final static double kRobot_CenterTurningRadius = 13.5;	//NEEDS TO BE PRECISELY MEASURED
-	private final static double kRobot_CenterTurningCircumference = 2 * kRobot_CenterTurningRadius * Math.PI;
-	private static final double kRobot_EncoderToOutputProportion = 1;	//this is a 'tested' coefficient,
-																		//between what we tell the robot to do and what it actually does.
+	private final static double kRobot_CenterTurningRadius = 14.25;	//NEEDS TO BE PRECISELY MEASURED
+	private final static double kRobot_CenterTurningCircumference = 2 * kRobot_CenterTurningRadius * Math.PI; //approx 89.53539062730911
+	private static final double kRobot_EncoderToOutputProportion = 15.833626974;	//this should be (but isn't) a 'tested' coefficient,
+	// a good guess is:													//between what we tell the robot to do and what it actually does.
+	/* drive gear (from the cim): 14 teeth
+	 * driven gear (where the encoder is): 50 teeth
+	 * ratio from CIM to Encoder = 50/14 = 3.57142857 : 1
+	 * 
+	 * Total high gear ratio: 4.5 : 1
+	 * where the drive gear is the gear on the Encoder shaft
+	 * and the driven gear is on the output shaft...
+	 * so driven gear / drive gear = 4.5 : 1 = 9/2 from the CIM to the output.
+	 * 
+	 * Therefore, the ratio from the encoder gear to the output gear
+	 * is 4.5 / 3.5714285 = 1.26
+	 * 
+	 * circumference of 4-inch drive wheels: 12.56 inches
+	 * Since the encoder shaft turns 1.26 times for every rotation of the
+	 * output shaft, and the output shaft turns once for every revolution of
+	 * the wheels, every time the encoder completes one full revolution, the
+	 * robot moves 1.26 (encoder to shaft) * 1 (pulley to pulley) * 12.56637061436 (circumference) = 15.833626974 inches
+	 * 
+	 * Therefore, the 1 inch to encoder rotation ratio is 1 / 15.833626974 = 0.063156723449
+	 * 
+	 * So, you can now hopefully put exact degrees and exact inches into any of the driveStraight
+	 * code that uses inches instead of timing (so motion magic or PID stuff) and it will actually move
+	 * that number of inches
+	 * 
+	 http://www.studica.com/ca/en/andymark/super-sonic-shifter.html
+	 */
 
 	public enum DriveTrainConfigurations {
 		Auto_5F1_RightLead, Auto_5F1_LeftLead, Teleop_2F1x2, Auto_2F1x2
@@ -44,7 +70,7 @@ public class DriveTrainSystem extends Subsystem {
 		Left, Right, Forwards, Backwards
 	};
 	
-	public static final double kLeftCoefficent = 1.05;
+	public static final double kLeftCoefficient = 1.05;
 	
 	public final static float kNominalVoltage = 0;
 	public final static float kPeakVoltage = 12;
@@ -110,10 +136,10 @@ public class DriveTrainSystem extends Subsystem {
 
 	// stupid sonic shifter gear ratios:
 	// Low Ratio: 11.4:1 //going to test, don't need these ratios. Leaving for
-	// anyone looking to do math.
+	// anyone looking to do math
 	// High Ratio: 4.5:1
 	/* http://www.andymark.com/super-sonic-2-speed-gearbox-p/am-3039_45.htm */
-
+	
 	// Calculate native units / 100 ms (the velocity calculation is perfomed
 	// every 100 ms)
 	// target velocity (as rotations/min) * (1 min/60sec) * (1 sec/10ms) * 1440
@@ -125,17 +151,17 @@ public class DriveTrainSystem extends Subsystem {
 	// INDEPENDENT FROM SYSTEM
 
 	// feed-forward gain
-	private static final double kFGain_R = 0.0011574074;	//needs to be experimentally tuned
-	private static final double kFGain_L = 0.0011574074;	//needs to be experimentally tuned
+	private static final double kFGain_R = 0.4;	//needs to be experimentally tuned
+	private static final double kFGain_L = 0.4;	//needs to be experimentally tuned
 	
 	// calculated p gain = (percentThrottleToFixError *
 	// fullForwardOutput)/(maximumError)
-	// double until motor oscillates (too much p) or is adequate for system.
+	// double until motor oscillates (too much p) or is adequate for sys	tem.
 	// ONLY TEST WITH SYSTEM DRAG ON MOTOR
 
 	// p gain
-	private static final double kPGain_R = 0.0;
-	private static final double kPGain_L = 0.0;
+	private static final double kPGain_R = 0.2;
+	private static final double kPGain_L = 0.2;
 	
 	// smoothes motion from error to setpoint.
 	// Start with 10 * pgain
@@ -148,11 +174,11 @@ public class DriveTrainSystem extends Subsystem {
 	// start with 1/100 * pgain
 
 	// i gain
-	private static final double kIGain_R = 0.0;
-	private static final double kIGain_L = 0.0;
+	private static final double kIGain_R = 0.000;
+	private static final double kIGain_L = 0.000;
 
 	
-	
+	//these are static placeholders. Don't delete.
 	private static double leftArcLength = 0;
 	private static double rightArcLength = 0;
 	
@@ -229,7 +255,10 @@ public class DriveTrainSystem extends Subsystem {
 			configLeftFeedback();
 			// configure the PID loop constants
 			configLeftPID(0, kFGain_L, kPGain_L, kIGain_L, kDGain_L);
-
+			
+			leftMasterMotor.setMotionMagicAcceleration(2200);
+			leftMasterMotor.setMotionMagicCruiseVelocity(2200 * kLeftCoefficient);
+			
 			break;
 		case Auto_5F1_RightLead:
 			rightMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
@@ -237,6 +266,10 @@ public class DriveTrainSystem extends Subsystem {
 			configRightFeedback();
 
 			configRightPID(0, kFGain_R, kPGain_R, kIGain_R, kDGain_R);
+			
+			rightMasterMotor.setMotionMagicAcceleration(2200);
+			rightMasterMotor.setMotionMagicCruiseVelocity(2200);
+			
 			break;
 		case Auto_2F1x2:
 			leftMasterMotor.changeControlMode(CANTalon.TalonControlMode.MotionMagic);
@@ -244,10 +277,16 @@ public class DriveTrainSystem extends Subsystem {
 
 			configRightFeedback();
 			configLeftFeedback();
-
+			
 			configRightPID(0, kFGain_R, kPGain_R, kIGain_R, kDGain_R);
 			configLeftPID(0, kFGain_L, kPGain_L, kIGain_L, kDGain_L);
+			
+			leftMasterMotor.setMotionMagicAcceleration(2200);
+			leftMasterMotor.setMotionMagicCruiseVelocity(2200 * kLeftCoefficient);
 
+			rightMasterMotor.setMotionMagicAcceleration(2200);
+			rightMasterMotor.setMotionMagicCruiseVelocity(2200);
+			
 			break;
 		default:
 			// for safety don't do what you don't know.
@@ -262,59 +301,73 @@ public class DriveTrainSystem extends Subsystem {
 	public boolean setStraightMotionMagic(double distance, DriveTrainConfigurations config) {
 		configMotionMagic(config);
 		
-		distance *= kRobot_EncoderToOutputProportion;
+		distance /= kRobot_EncoderToOutputProportion;
 		
+		//TODO: add a cruise velocity setting that utilizes the kLeftCoefficient?
 		switch (config) {
 		case Auto_5F1_LeftLead:
+			leftMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			leftMasterMotor.set(distance);
 			break;
 		case Auto_5F1_RightLead:
+			rightMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			rightMasterMotor.set(distance);
 			break;
 		case Auto_2F1x2:
+			leftMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			leftMasterMotor.set(distance);
+			rightMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			rightMasterMotor.set(distance);
+			break;
 		default:
 			return false;
 		}
 		return true;
 	}
 
-	public boolean goStraightMotionMagic(double distance, DriveTrainConfigurations config) {
-		distance *= kRobot_EncoderToOutputProportion;
+	public boolean goStraightMotionMagic(double distance, DriveTrainConfigurations config, int precision) {
+		precision =(int)(Math.abs(precision) / kRobot_EncoderToOutputProportion);
+		distance /= kRobot_EncoderToOutputProportion;
 		
 		switch (config) {
 		case Auto_5F1_LeftLead:
+			leftMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			leftMasterMotor.set(distance);
-
 			// *in whiny voice* are we there yet? love this comment :)
-			if (leftMasterMotor.getClosedLoopError() == 0) {
-				return true;
-			}
-			break;
+			boolean leftFinished = ((leftMasterMotor.getPosition() <= precision + leftArcLength) && (leftMasterMotor.getPosition() >= leftArcLength - precision));
+			
+			SmartDashboard.putNumber("Left str pos", leftMasterMotor.getPosition());
+			
+			return leftFinished;
 		case Auto_5F1_RightLead:
+			rightMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 			rightMasterMotor.set(distance);
 
 			// *in whiny voice* are we there yet?
-			if (rightMasterMotor.getClosedLoopError() == 0) {
-				return true;
-			}
-			break;
+			boolean rightFinished = ((rightMasterMotor.getPosition() <= precision + rightArcLength) && (rightMasterMotor.getPosition() >= rightArcLength - precision));
+			
+			SmartDashboard.putNumber("Right str pos", rightMasterMotor.getPosition());
+			
+			return rightFinished;
 		case Auto_2F1x2:
 			leftMasterMotor.set(distance);
 			rightMasterMotor.set(distance);
 
 			// *in whiny voice* are we there yet?
-			if (leftMasterMotor.getClosedLoopError()  == 0 && rightMasterMotor.getClosedLoopError() == 0) {
-				return true;
-			}
+			leftFinished = ((leftMasterMotor.getPosition() <= precision + distance) && (leftMasterMotor.getPosition() >= distance - precision));
+			rightFinished = ((rightMasterMotor.getPosition() <= precision + distance) && (rightMasterMotor.getPosition() >= distance - precision));
+			
+			SmartDashboard.putNumber("Left str pos", leftMasterMotor.getPosition());
+			SmartDashboard.putNumber("Right str pos", rightMasterMotor.getPosition());
+			SmartDashboard.putBoolean("Str Finished", leftFinished && rightFinished);
+			
+			return leftFinished && rightFinished;
 		default:
 			// when this method is 'finished' running return true.
 			// So, if the config is bad, get out of here.
 			return true;
 		}
 		// you obviously ain't there yet.
-		return false;
 	}
 	
 	/* Quick(ish) info about turningMotionMagic:
@@ -331,7 +384,7 @@ public class DriveTrainSystem extends Subsystem {
 	 * degree revolution is the entire width of the robot, left wheel to right wheel, with either the left 
 	 * or the right wheel acting as the center of the circle.
 	 * 
-	 * Therefore, first determine LEFT or RIGHT turn from char dir, then aroundCenter or not, then do the turn.
+	 * Therefore, first determine LEFT or RIGHT turn from Direction dir, then aroundCenter or not, then do the turn.
 	 * 
 	 * Quick note about turning: to turn a bot to the right (or left), reverse the right (or left) side of the drivetrain or power the left (or right)
 	 * side. This will assume that, for a Right turn NOT aroundCenter, the Right side of the drivetrain will stay static.
@@ -354,7 +407,6 @@ public class DriveTrainSystem extends Subsystem {
 				tmp_rightArcLength *= 2;
 			}
 			break;
-			
 		case Right:
 			if(aroundCenter){
 				tmp_rightArcLength = -tmp_rightArcLength;
@@ -363,30 +415,42 @@ public class DriveTrainSystem extends Subsystem {
 				tmp_leftArcLength *= 2;
 			}
 			break;
-			
 		default:	//if you aren't turning, you're using this method wrong. So leave. Now.
 			tmp_leftArcLength = 0;
 			tmp_rightArcLength = 0;
 			break;
 		}
-		leftArcLength = tmp_leftArcLength * kRobot_EncoderToOutputProportion;
-		rightArcLength = tmp_leftArcLength * kRobot_EncoderToOutputProportion;
 		
+		leftArcLength = tmp_leftArcLength / kRobot_EncoderToOutputProportion;
+		rightArcLength = tmp_rightArcLength / kRobot_EncoderToOutputProportion;
+		
+		leftMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 		leftMasterMotor.set(leftArcLength);
+		
+		rightMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 		rightMasterMotor.set(rightArcLength);
+		
+		SmartDashboard.putNumber("left arc: ", leftArcLength);
+		SmartDashboard.putNumber("right arc: ", rightArcLength);
 	}
 	/*
 	 * This method should be called during execute and isFinished of a command
 	 * that initialized with the above method.
 	 */
 	public boolean goTurningMotionMagic(int precision){
-		precision = Math.abs(precision);
+		precision = (int)(Math.abs(precision) / kRobot_EncoderToOutputProportion);
 		
+		leftMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
 		leftMasterMotor.set(leftArcLength);
-		rightMasterMotor.set(rightArcLength);
 		
-		boolean leftFinished = ((leftMasterMotor.getClosedLoopError() <= precision) && (leftMasterMotor.getClosedLoopError() >= -precision));
-		boolean rightFinished = ((rightMasterMotor.getClosedLoopError() <= precision) && (rightMasterMotor.getClosedLoopError() >= -precision));
+		rightMasterMotor.changeControlMode(TalonControlMode.MotionMagic);
+		rightMasterMotor.setPosition(rightArcLength);
+		
+		boolean leftFinished = ((leftMasterMotor.getPosition() <= precision + leftArcLength) && (leftMasterMotor.getPosition() >= leftArcLength - precision));
+		boolean rightFinished = ((rightMasterMotor.getPosition() <= precision + rightArcLength) && (rightMasterMotor.getPosition() >= rightArcLength - precision));
+		
+		SmartDashboard.putNumber("Left pos", leftMasterMotor.getPosition());
+		SmartDashboard.putNumber("Right pos", rightMasterMotor.getPosition());
 		
 		return leftFinished && rightFinished;
 	}
@@ -631,7 +695,7 @@ public class DriveTrainSystem extends Subsystem {
 	}
 
 	public void autonomousInit() {
-		enableBrakeMode(true);
+		enableBrakeMode(false);
 		configFollower(DriveTrainConfigurations.Auto_2F1x2);
 	}
 
@@ -645,6 +709,6 @@ public class DriveTrainSystem extends Subsystem {
 
 	public double getLeftCoefficient() {
 		// TODO Auto-generated method stub
-		return kLeftCoefficent;
+		return kLeftCoefficient;
 	}
 }

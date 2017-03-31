@@ -68,13 +68,14 @@ public class AlignToBoiler extends Command {
 			if(finishedCounter >= kOscillationPeriods)
 				finished = true;
 		}
+		
 		if (!finished) {
 			switch (dir) {
 			case SocketVision.LEFT:
-				Robot.driveTrainSystem.set(-vBusProportion * Robot.driveTrainSystem.getLeftCoefficient(), vBusProportion);
+				Robot.driveTrainSystem.set(/*-vBusProportion * Robot.driveTrainSystem.getLeftCoefficient()*/ 0, vBusProportion);
 				break;
 			case SocketVision.RIGHT:
-				Robot.driveTrainSystem.set(vBusProportion * Robot.driveTrainSystem.getLeftCoefficient(), -vBusProportion);
+				Robot.driveTrainSystem.set(/*vBusProportion * Robot.driveTrainSystem.getLeftCoefficient()*/0, -vBusProportion);
 				break;
 			default:
 				finished = true;

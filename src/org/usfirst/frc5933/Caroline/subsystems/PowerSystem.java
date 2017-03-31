@@ -44,7 +44,7 @@ public class PowerSystem extends Subsystem {
 	}
 
 	public void robotInit() {
-
+		powerDistributionPanel.clearStickyFaults();
 	}
 
 	public void teleopInit() {
