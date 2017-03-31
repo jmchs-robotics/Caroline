@@ -385,6 +385,7 @@ public class FlyWheelSystem extends Subsystem {
 		 */
 		private static double[] inchesToRpmPIDF(double inches) {
 			int index = 0;
+
 			while (kLookupFlywheelSettings.length - 1 > index) {
 				if (kLookupFlywheelSettings[index][0] == inches) {
 					return kLookupFlywheelSettings[index];

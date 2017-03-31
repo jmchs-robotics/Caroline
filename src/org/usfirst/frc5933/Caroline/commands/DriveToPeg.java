@@ -53,6 +53,7 @@ public class DriveToPeg extends Command {
 		finished = false;
 		
 		SmartDashboard.putString("Auto Stage: ", "Drive To Peg");
+		setTimeout(6);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -135,7 +136,7 @@ public class DriveToPeg extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return finished;
+		return finished || isTimedOut();
 	}
 
 	// Called once after isFinished returns true

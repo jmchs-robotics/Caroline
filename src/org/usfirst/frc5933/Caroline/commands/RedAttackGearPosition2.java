@@ -49,12 +49,12 @@ public class RedAttackGearPosition2 extends CommandGroup {
 		// exist yet?
     	
     	//when auto starts, the flywheel will start automatically
-    	//addSequential(new ToggleFlywheel());
+    	addSequential(new ToggleFlywheel());
     	addSequential(new DelayCommand(1.5));		//so wait for it to spin up
     	addSequential(new ToggleHopper());		//then start the hopper
     	addSequential(new DelayCommand(4));		//wait a bit for the balls to fly
     	addSequential(new ToggleHopper());
-    	//addSequential(new ToggleFlywheel());	//kill the hopper and flywheel
+    	addSequential(new ToggleFlywheel());	//kill the hopper and flywheel
     	addSequential(new DriveToPeg());		//drive to peg
         addSequential(new DefaultAutonomousCommand(6));//maintain position
 	}

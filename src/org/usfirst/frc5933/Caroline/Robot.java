@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc5933.Caroline.commands.*;
 import org.usfirst.frc5933.Caroline.subsystems.*;
+import org.usfirst.frc5933.Caroline.subsystems.DriveTrainSystem.Direction;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -290,7 +291,7 @@ public class Robot extends IterativeRobot {
 			autonomousCommand = new NullCommand();
 			break;
 		}
-		autonomousCommand = new BlueAttackGearPosition2();
+		autonomousCommand = new BlueAttackGearPosition3();
 		
 		SmartDashboard.putString("Autonomous Command is: ", autonomousCommand.getName());
 		SmartDashboard.putNumber("Auto Run Case: ", roboRioSystem.getDIP());
