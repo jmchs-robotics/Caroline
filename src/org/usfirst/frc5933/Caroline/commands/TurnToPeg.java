@@ -44,7 +44,7 @@ public class TurnToPeg extends Command {
 	}
 
 	protected boolean isFinished() {
-		finished = (Robot.get_peg_direction() == SocketVision.NADA) && (Math.round(Robot.get_peg_degrees_x()) == -1) && (System.currentTimeMillis() - startTime > 600);
+		finished = (Robot.get_peg_direction() == SocketVision.NADA) && (Math.round(Robot.get_peg_degrees_x()) == -1) && (System.currentTimeMillis() - startTime > 800);
 		return finished || isTimedOut();
 	}
 
