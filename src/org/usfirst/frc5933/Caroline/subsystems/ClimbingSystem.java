@@ -62,6 +62,9 @@ public class ClimbingSystem extends Subsystem {
 	public void autonomousInit() {
 	}
 
+	/**
+	 * This function controls the claw and spindle of the climbing subsystem on the robot during teleop.
+	 */
 	public void teleopPeriodic() {
 		if (running_) {
 			climbingSpindleMotor.set(1);
@@ -90,7 +93,7 @@ public class ClimbingSystem extends Subsystem {
 		running_ = !running_;
 	}
 
-	/*
+	/**
 	 * toggleClaw is called at a button press to toggle through the 4 states of
 	 * what the claw motor will/can do. Hardware limit switches stop it so the
 	 * code doesn't have to.

@@ -28,11 +28,33 @@ public class SocketVision extends Thread {
 	private double distanceHeight = 0;
 	private double distanceWidth = 0;
 
+	/**
+	 * Each SocketVision object is created with an ip and a port. There is no default constructor. The ip address
+	 * is simply checked to be valid, but the port MUST match the port that the co-processor will be writing to.
+	 * @param ip
+	 * @param port
+	 */
 	public SocketVision(String ip, int port) {
 		ip_ = ip;
 		port_ = port;
 	}
 
+	/**
+	 * DO NOT USE THE DEFAULT CONSTRUCTOR - Every SocketVision object requires an ip and a port, formatted
+	 * as a string and an int respectively.
+	 * @param ip
+	 * @param port
+	 */
+	public SocketVision(){
+	}
+	
+	/**
+	 * This function tries to create a new DatagramSocket object with the port and ip set in the constructor.
+	 * 
+	 * @return true if IP and port are valid
+	 * @return <code>true</code> <strong>IF</strong> valid IP <strong>AND</strong> port
+	 * <p></p> <code>false</code> <strong>IF</strong> invalid IP <strong>OR</strong> port
+	 */
 	public boolean connect() {
 		try {
 			socket_ = new DatagramSocket(port_);
@@ -52,6 +74,11 @@ public class SocketVision extends Thread {
 		return is_connected_;
 	}
 
+	/**
+	 * Read DatagramPackets from the UDP Socket and parses the information into usable variables. 
+	 * @return <code>true</code> ::<strong> Datagram Packets </strong>  in valid format
+	 * <p></p> <code>false</code> ::<strong> Datagram Packets</strong> failed <code>try...catch</code> block or are <code>null</code>
+	 */
 	public boolean recv() {
 		DatagramPacket packet = new DatagramPacket(data_, data_.length);
 		try {
@@ -178,7 +205,10 @@ public class SocketVision extends Thread {
 			recv();
 		}
 	}
-
+	
+	/**
+	 * This function stops the UDP socket properly, so it can be restarted later.
+	 */
 	public void stoprunning() {
 		keep_running = false;
 

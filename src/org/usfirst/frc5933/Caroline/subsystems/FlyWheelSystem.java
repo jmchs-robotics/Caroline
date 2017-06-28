@@ -36,32 +36,32 @@ public class FlyWheelSystem extends Subsystem {
 			{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, // 0 ft
 			{ 96, -1950, 1.8, 6.4, 0.0, 0.0 }, // second coordinate point 8
 			// ft
-			{ 106, 2025, 1.8, 6.9, 0.0, 0.0 }, // third 9 ft
-			{ 112, 2075, 1.8, 6.5, 0.0, 0.0 }, // fourth 10 ft
-			{ 118, 2100, 1.8, 6.4, 0.0, 250.0 }, // fifth 11 ft
-			{ 126, 2235, 1.8, 6.4, 0.0, 275.0 }, // sixth 12 ft
-			{ 135, 2250, 1.8, 6.4, 0.0, 200.0 }, // seventh 13 ft
-			{ 141, 2287, 1.8, 6.0, 0.0, 0.0 }, // eighth 14 ft
-			{ 148, 2325, 1.8, 5.8, 0.0, 0.0 }, // ninth 15 ft
-			{ 154, 2380, 1.8, 5.4, 0.0, 0.0 }, // tenth 16 ft
-			{ 160, 2420, 1.8, 5.2, 0.0, 0.0 }  // extrapolated 17 ft.
+			{ 106, -2025, 1.8, 6.9, 0.0, 0.0 }, // third 9 ft
+			{ 112, -2075, 1.8, 6.5, 0.0, 0.0 }, // fourth 10 ft
+			{ 118, -2100, 1.8, 6.4, 0.0, 250.0 }, // fifth 11 ft
+			{ 126, -2235, 1.8, 6.4, 0.0, 275.0 }, // sixth 12 ft
+			{ 135, -2250, 1.8, 6.4, 0.0, 200.0 }, // seventh 13 ft
+			{ 141, -2287, 1.8, 6.0, 0.0, 0.0 }, // eighth 14 ft
+			{ 148, -2325, 1.8, 5.8, 0.0, 0.0 }, // ninth 15 ft
+			{ 154, -2380, 1.8, 5.4, 0.0, 0.0 }, // tenth 16 ft
+			{ 160, -2420, 1.8, 5.2, 0.0, 0.0 }  // extrapolated 17 ft.
 		};
 
 		public final static float kNominalVoltage = 0;
 		public final static float kPeakVoltage = 12;
 
-		public final static double kVbusIncrement = -0.05;
-		public final static double kVbusMin = -0.3;
-		public final static double kVbusMax = -1;
+		public final static double kVbusIncrement = 0.05;
+		public final static double kVbusMin = 0.3;
+		public final static double kVbusMax = 1;
 
 		public final static double kSpeedIncrement = -25;
 		public final static double kSpeedMin = -1500;
 		public final static double kSpeedMax = -5000;
 
-		private double vbus_ = -0.3;
+		private double vbus_ = 0.3;
 		private double speed_ = -1500;
 
-		public boolean vbus_mode = false;
+		public boolean vbus_mode = true;
 		private boolean running_ = true;
 		private static boolean tuning_ = true;
 		private boolean using_vision = false;
@@ -162,7 +162,7 @@ public class FlyWheelSystem extends Subsystem {
 		public void autonomousInit() {
 			tuning_ = false;
 			running_ = false;
-			speed_ = runFancyPIDMaintenance(135);	//approx 13 ft (on the table)
+			setSpeed(runFancyPIDMaintenance(135));	//approx 13 ft (on the table)
 													//is probably too long
 		}
 
@@ -226,7 +226,6 @@ public class FlyWheelSystem extends Subsystem {
 
 		public void setSpeed(double s) {
 			setSpeedMode();
-			flyWheelMotor.set(s);
 			speed_ = s;
 			SmartDashboard.putNumber("Given speed:", s);
 			if (Robot.show_debug_flywheel) {
