@@ -52,7 +52,7 @@ public class FlyWheelSystem extends Subsystem {
 
 		public final static double kVbusIncrement = 0.05;
 		public final static double kVbusMin = 0.3;
-		public final static double kVbusMax = 1;
+		public final static double kVbusMax = 0.6;
 
 		public final static double kSpeedIncrement = -25;
 		public final static double kSpeedMin = -1500;
@@ -135,20 +135,6 @@ public class FlyWheelSystem extends Subsystem {
 			flyWheelMotor.setInverted(isWheelInverted);
 		}
 
-		private void configFPID(int profileNumber, double f, double p, double i, double d) {
-			/* set closed loop gains in profile 0 or profile 1 only */
-			/*
-			 * from example at
-			 * https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/
-			 * JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java
-			 */
-			flyWheelMotor.setProfile(profileNumber);
-			flyWheelMotor.setF(f);
-			flyWheelMotor.setP(p);
-			flyWheelMotor.setI(i);
-			flyWheelMotor.setD(d);
-		}
-
 		public void teleopInit() {
 			tuning_ = true;
 			// TODO: Remove me later, or add into a debug conditional
@@ -164,6 +150,44 @@ public class FlyWheelSystem extends Subsystem {
 			running_ = false;
 			setSpeed(runFancyPIDMaintenance(135));	//approx 13 ft (on the table)
 													//is probably too long
+		}
+		
+		public void teleopPeriodic() {
+			if(running_){
+				if (vbus_mode) {
+					goVbus();
+				} else {
+					goSpeed();
+				}
+			}else{
+				flyWheelMotor.set(0);
+			}
+		}
+
+		public void autonomousPeriodic() {
+			if(running_){
+				if (vbus_mode) {
+					goVbus();
+				} else {
+					goSpeed();
+				}
+			}else{
+				flyWheelMotor.set(0);
+			}
+		}
+		
+		private void configFPID(int profileNumber, double f, double p, double i, double d) {
+			/* set closed loop gains in profile 0 or profile 1 only */
+			/*
+			 * from example at
+			 * https://github.com/CrossTheRoadElec/FRC-Examples/blob/master/
+			 * JAVA_VelocityClosedLoop/src/org/usfirst/frc/team469/robot/Robot.java
+			 */
+			flyWheelMotor.setProfile(profileNumber);
+			flyWheelMotor.setF(f);
+			flyWheelMotor.setP(p);
+			flyWheelMotor.setI(i);
+			flyWheelMotor.setD(d);
 		}
 
 		private void configVoltages(float nominal, double peak) {
@@ -286,7 +310,7 @@ public class FlyWheelSystem extends Subsystem {
 
 		public void vbusDown() {
 			vbus_ -= kVbusIncrement;
-			if (vbus_ > kVbusMin)
+			if (Math.abs(vbus_) < Math.abs(kVbusMin))
 				vbus_ = kVbusMin;
 
 			// if (Robot.show_debug_flywheel) {
@@ -296,7 +320,7 @@ public class FlyWheelSystem extends Subsystem {
 
 		public void vbusUp() {
 			vbus_ += kVbusIncrement;
-			if (vbus_ < kVbusMax)
+			if (Math.abs(vbus_) > Math.abs(kVbusMax))
 				vbus_ = kVbusMax;
 
 			// if (Robot.show_debug_flywheel) {
@@ -305,31 +329,7 @@ public class FlyWheelSystem extends Subsystem {
 		}
 
 		private double getAdjustedVbus() {
-			return vbus_ * kPeakVoltage / RobotMap.powerSystemPowerDistributionPanel.getVoltage();
-		}
-
-		public void teleopPeriodic() {
-			if(running_){
-				if (vbus_mode) {
-					goVbus();
-				} else {
-					goSpeed();
-				}
-			}else{
-				flyWheelMotor.set(0);
-			}
-		}
-
-		public void autonomousPeriodic() {
-			if(running_){
-				if (vbus_mode) {
-					goVbus();
-				} else {
-					goSpeed();
-				}
-			}else{
-				flyWheelMotor.set(0);
-			}
+			return vbus_ * Math.abs(kPeakVoltage / RobotMap.powerSystemPowerDistributionPanel.getVoltage());
 		}
 
 		public void toggle() {

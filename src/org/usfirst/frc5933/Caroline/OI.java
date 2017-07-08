@@ -83,7 +83,7 @@ public class OI {
         startButtonSub = new JoystickButton(subsystemJoystick, 8);
         startButtonSub.whenPressed(new ToggleClimber());
         backButtonSub = new JoystickButton(subsystemJoystick, 7);
-        backButtonSub.whenPressed(new ToggleClaw());
+        backButtonSub.whenPressed(new /*ToggleClaw()*/NullCommand());
         lToggleSub = new JoystickButton(subsystemJoystick, 9);
         lToggleSub.whenPressed(new FlyFaster());
         rToggleSub = new JoystickButton(subsystemJoystick, 10);
@@ -93,22 +93,22 @@ public class OI {
         rBumperSub = new JoystickButton(subsystemJoystick, 6);
         rBumperSub.whenPressed(new ToggleFlywheel());
         yButtonSub = new JoystickButton(subsystemJoystick, 4);
-        yButtonSub.whenPressed(new ToggleShootingVision());
+        yButtonSub.whenPressed(new /*ToggleShootingVision()*/NullCommand());
         bButtonSub = new JoystickButton(subsystemJoystick, 2);
         bButtonSub.whenPressed(new AgitateSlower());
         aButtonSub = new JoystickButton(subsystemJoystick, 1);
         aButtonSub.whenPressed(new AgitateFaster());
         xButtonSub = new JoystickButton(subsystemJoystick, 3);
-        xButtonSub.whenPressed(new FlyWheelMode());
+        xButtonSub.whenPressed(new /*FlyWheelMode()*/ NullCommand());
        
         driverJoystick = new Joystick(0);
         
         startButton = new JoystickButton(driverJoystick, 8);
         startButton.whileHeld(new StopFlaps());
         lToggle = new JoystickButton(driverJoystick, 9);
-        lToggle.whenPressed(new DriveToPeg());
+        lToggle.whenPressed(new /*DriveToPeg()*/NullCommand());
         rToggle = new JoystickButton(driverJoystick, 10);
-        rToggle.whenPressed(new AlignToBoiler());
+        rToggle.whenPressed(new /*AlignToBoiler()*/NullCommand());
         lBumper = new JoystickButton(driverJoystick, 5);
         lBumper.whileHeld(new NullCommand());
         backButton = new JoystickButton(driverJoystick, 7);
